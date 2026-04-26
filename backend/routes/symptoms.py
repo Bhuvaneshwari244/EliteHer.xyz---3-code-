@@ -1,13 +1,17 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
-from routes.auth import users_db
+from routes.auth import users_db, save_users_db, load_users_db
 
 symptoms_bp = Blueprint('symptoms', __name__)
 
 @symptoms_bp.route('/', methods=['POST'])
 @jwt_required()
 def log_symptom():
+    # Reload database to get latest data
+    global users_db
+    users_db = load_users_db()
+    
     current_user_email = get_jwt_identity()
     user = users_db.get(current_user_email)
     
@@ -18,9 +22,10 @@ def log_symptom():
     
     symptom = {
         'id': len(user['symptoms']) + 1,
-        'date': data.get('date', datetime.utcnow().isoformat()),
+        'date': data.get('date', datetime.utcnow().isoformat().split('T')[0]),
         'mood': data.get('mood'),
         'pain_level': data.get('pain_level', 0),
+        'symptoms': data.get('symptoms', []),
         'cramps': data.get('cramps', False),
         'headache': data.get('headache', False),
         'fatigue': data.get('fatigue', 0),
@@ -32,6 +37,9 @@ def log_symptom():
     
     user['symptoms'].append(symptom)
     
+    # Save to file
+    save_users_db(users_db)
+    
     return jsonify({
         'message': 'Symptom logged successfully',
         'symptom': symptom
@@ -40,6 +48,10 @@ def log_symptom():
 @symptoms_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_symptoms():
+    # Reload database to get latest data
+    global users_db
+    users_db = load_users_db()
+    
     current_user_email = get_jwt_identity()
     user = users_db.get(current_user_email)
     
@@ -64,6 +76,10 @@ def get_symptoms():
 @symptoms_bp.route('/analysis', methods=['GET'])
 @jwt_required()
 def analyze_symptoms():
+    # Reload database to get latest data
+    global users_db
+    users_db = load_users_db()
+    
     current_user_email = get_jwt_identity()
     user = users_db.get(current_user_email)
     

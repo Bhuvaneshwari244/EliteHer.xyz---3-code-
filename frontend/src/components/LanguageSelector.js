@@ -7,18 +7,18 @@ function LanguageSelector() {
   const [isOpen, setIsOpen] = useState(false);
 
   const languages = [
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'hi', name: 'हिंदी', flag: '🇮🇳' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-    { code: 'pt', name: 'Português', flag: '🇵🇹' },
-    { code: 'zh', name: '中文', flag: '🇨🇳' },
-    { code: 'ja', name: '日本語', flag: '🇯🇵' },
-    { code: 'ko', name: '한국어', flag: '🇰🇷' },
-    { code: 'ar', name: 'العربية', flag: '🇦🇪' },
-    { code: 'ru', name: 'Русский', flag: '🇷🇺' },
-    { code: 'it', name: 'Italiano', flag: '🇮🇹' }
+    { code: 'en', name: 'English' },
+    { code: 'hi', name: 'हिंदी' },
+    { code: 'es', name: 'Español' },
+    { code: 'fr', name: 'Français' },
+    { code: 'de', name: 'Deutsch' },
+    { code: 'pt', name: 'Português' },
+    { code: 'zh', name: '中文' },
+    { code: 'ja', name: '日本語' },
+    { code: 'ko', name: '한국어' },
+    { code: 'ar', name: 'العربية' },
+    { code: 'ru', name: 'Русский' },
+    { code: 'it', name: 'Italiano' }
   ];
 
   const currentLang = languages.find(l => l.code === language) || languages[0];
@@ -35,21 +35,25 @@ function LanguageSelector() {
         onClick={() => setIsOpen(!isOpen)}
         title="Change Language"
       >
-        <Globe size={20} />
-        <span className="language-current">{currentLang.flag} {currentLang.name}</span>
+        <Globe size={20} className="language-globe-icon" />
+        <span className="language-current">{currentLang.code.toUpperCase()} {currentLang.name}</span>
       </button>
 
       {isOpen && (
         <>
           <div className="language-overlay" onClick={() => setIsOpen(false)} />
           <div className="language-dropdown">
+            <div className="language-dropdown-header">
+              <Globe size={18} />
+              <span>Select Language</span>
+            </div>
             {languages.map(lang => (
               <button
                 key={lang.code}
                 className={`language-option ${language === lang.code ? 'active' : ''}`}
                 onClick={() => handleLanguageChange(lang.code)}
               >
-                <span className="language-flag">{lang.flag}</span>
+                <span className="language-flag">{lang.code.toUpperCase()}</span>
                 <span className="language-name">{lang.name}</span>
                 {language === lang.code && (
                   <span className="language-check">✓</span>

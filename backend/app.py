@@ -12,14 +12,15 @@ app.url_map.strict_slashes = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your-secret-key-change-in-production')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=7)
 
-# Configure CORS to allow Vercel domains
+# Configure CORS to allow frontend
 CORS(app, resources={
     r"/*": {
-        "origins": ["*"],  # Allow all origins for now
+        "origins": ["http://localhost:3000", "http://127.0.0.1:3000"],
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"],
+        "allow_headers": ["Content-Type", "Authorization", "X-Request-Time"],
         "expose_headers": ["Content-Type", "Authorization"],
-        "supports_credentials": True
+        "supports_credentials": False,
+        "max_age": 3600
     }
 })
 

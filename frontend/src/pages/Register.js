@@ -26,12 +26,48 @@ function Register({ setAuth }) {
     setLoading(true);
 
     try {
+      console.log('Attempting registration with:', { 
+        name: formData.name, 
+        email: formData.email, 
+        age: formData.age 
+      });
+      
       const response = await authAPI.register(formData);
-      localStorage.setItem('token', response.data.access_token);
+      console.log('Registration successful:', response.data);
+      
+      const token = response.data.access_token;
+      const user = response.data.user || { 
+        email: formData.email, 
+        name: formData.name,
+        age: formData.age 
+      };
+      
+      // Store token and user info
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('loginTime', new Date().toISOString());
+      
       setAuth(true);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'Registration failed');
+      console.error('Registration error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        fullError: err
+      });
+      
+      let errorMessage = 'Registration failed. Please try again.';
+      
+      if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message === 'Network Error') {
+        errorMessage = 'Cannot connect to server. Please make sure the backend is running.';
+      } else if (!err.response) {
+        errorMessage = 'Network error. Please check your connection.';
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

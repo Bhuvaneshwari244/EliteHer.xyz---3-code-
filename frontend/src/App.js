@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
+import { authAPI, syncUtils } from './services/api';
+import SyncManager from './components/SyncManager';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -15,19 +17,74 @@ import Journal from './pages/Journal';
 import DoctorConsultation from './pages/DoctorConsultation';
 import Settings from './pages/Settings';
 import AdvancedFeatures from './pages/AdvancedFeatures';
+import AdvancedFeaturesV2 from './pages/AdvancedFeaturesV2';
+import VideoLibraryPage from './pages/VideoLibraryPage';
+import Trackers from './pages/Trackers';
+import HealthDataHub from './pages/HealthDataHub';
+import PregnancyMode from './pages/PregnancyMode';
 import './App.css';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [dataRefreshTrigger, setDataRefreshTrigger] = useState(0);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token);
+    const checkAuth = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          // Verify token is still valid by making a test API call
+          await authAPI.getProfile();
+          setIsAuthenticated(true);
+          
+          // Update sync time on successful login verification
+          syncUtils.updateSyncTime();
+        } catch (error) {
+          // Only clear token if it's actually invalid (401), not for network errors
+          if (error.response?.status === 401) {
+            // Token is invalid, remove it and clear all local data
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('lastSyncTime');
+            setIsAuthenticated(false);
+          } else {
+            // Network error or server down - keep user logged in
+            console.warn('Could not verify token, but keeping session:', error.message);
+            setIsAuthenticated(true);
+          }
+        }
+      } else {
+        setIsAuthenticated(false);
+      }
+      setIsLoading(false);
+    };
+
+    checkAuth();
   }, []);
 
-  const ProtectedRoute = ({ children }) => {
-    return isAuthenticated ? children : <Navigate to="/login" />;
+  // Handle data refresh from sync manager
+  const handleDataRefresh = () => {
+    setDataRefreshTrigger(prev => prev + 1);
   };
+
+  const ProtectedRoute = ({ children }) => {
+    if (isLoading) {
+      return <div className="loading">Loading...</div>;
+    }
+    return isAuthenticated ? (
+      <>
+        {children}
+        <SyncManager onDataUpdate={handleDataRefresh} />
+      </>
+    ) : (
+      <Navigate to="/login" />
+    );
+  };
+
+  if (isLoading) {
+    return <div className="loading">Loading...</div>;
+  }
 
   return (
     <LanguageProvider>
@@ -42,14 +99,14 @@ function App() {
                 <Dashboard />
               </ProtectedRoute>
             } />
-            <Route path="/cycles" element={
-              <ProtectedRoute>
-                <CycleTracker />
-              </ProtectedRoute>
-            } />
             <Route path="/symptoms" element={
               <ProtectedRoute>
                 <SymptomLogger />
+              </ProtectedRoute>
+            } />
+            <Route path="/health-data" element={
+              <ProtectedRoute>
+                <HealthDataHub />
               </ProtectedRoute>
             } />
             <Route path="/pcod-assessment" element={
@@ -90,6 +147,26 @@ function App() {
             <Route path="/advanced-features" element={
               <ProtectedRoute>
                 <AdvancedFeatures />
+              </ProtectedRoute>
+            } />
+            <Route path="/video-library" element={
+              <ProtectedRoute>
+                <VideoLibraryPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/trackers" element={
+              <ProtectedRoute>
+                <Trackers />
+              </ProtectedRoute>
+            } />
+            <Route path="/pregnancy" element={
+              <ProtectedRoute>
+                <PregnancyMode />
+              </ProtectedRoute>
+            } />
+            <Route path="/phase4" element={
+              <ProtectedRoute>
+                <AdvancedFeaturesV2 />
               </ProtectedRoute>
             } />
             <Route path="/" element={<Navigate to="/dashboard" />} />

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Calendar, Activity, AlertCircle, TrendingUp, Heart, Menu, X, CalendarDays, BookOpen, Stethoscope, Settings, Sparkles } from 'lucide-react';
+import { Home, Calendar, Activity, AlertCircle, TrendingUp, Heart, Menu, X, CalendarDays, BookOpen, Stethoscope, Settings, Sparkles, Play, BarChart3, Database, Baby, Rocket } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 function Navigation() {
@@ -11,15 +11,15 @@ function Navigation() {
 
   const navItems = [
     { path: '/dashboard', icon: Home, label: t('nav.dashboard') },
-    { path: '/calendar', icon: CalendarDays, label: t('nav.calendar') },
-    { path: '/cycles', icon: Calendar, label: t('nav.cycles') },
-    { path: '/symptoms', icon: Activity, label: t('nav.symptoms') },
-    { path: '/journal', icon: BookOpen, label: t('nav.journal') },
-    { path: '/doctor-consultation', icon: Stethoscope, label: t('nav.doctors') },
+    { path: '/health-data', icon: Database, label: 'Health Data Hub' },
+    { path: '/trackers', icon: BarChart3, label: 'Health Trackers' },
+    { path: '/pregnancy', icon: Baby, label: 'Pregnancy Mode' },
     { path: '/pcod-assessment', icon: AlertCircle, label: t('nav.pcod') },
-    { path: '/health-insights', icon: TrendingUp, label: t('nav.insights') },
+    { path: '/doctor-consultation', icon: Stethoscope, label: t('nav.doctors') },
     { path: '/wellness-hub', icon: Heart, label: t('nav.wellness') },
+    { path: '/video-library', icon: Play, label: 'Video Library' },
     { path: '/advanced-features', icon: Sparkles, label: t('nav.advanced') },
+    { path: '/phase4', icon: Rocket, label: 'Goals & Achievements' },
     { path: '/settings', icon: Settings, label: t('nav.settings') }
   ];
 
@@ -38,6 +38,17 @@ function Navigation() {
 
       {/* Navigation Bar */}
       <nav className={`navigation-bar ${isOpen ? 'open' : ''}`}>
+        {/* Brand Logo */}
+        <div className="nav-brand" onClick={() => navigate('/dashboard')}>
+          <span className="nav-logo">🌸</span>
+          <div className="nav-brand-text">
+            <h2>Aura</h2>
+            <p>Period Tracker</p>
+          </div>
+        </div>
+        
+        <div className="nav-divider"></div>
+        
         <div className="nav-items">
           {navItems.map((item) => {
             const Icon = item.icon;

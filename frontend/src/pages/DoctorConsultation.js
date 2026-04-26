@@ -7,6 +7,7 @@ import ThemeToggle from '../components/ThemeToggle';
 import LanguageSelector from '../components/LanguageSelector';
 
 function DoctorConsultation() {
+  // Enhanced appointment management with automatic status updates and reminders
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('doctors');
   const [appointments, setAppointments] = useState([]);
@@ -17,10 +18,18 @@ function DoctorConsultation() {
   const [bookingForm, setBookingForm] = useState({
     doctorId: '',
     date: '',
-    time: '',
+    timeSlot: '',
     type: 'video',
-    reason: ''
+    reason: '',
+    paymentMethod: 'card'
   });
+
+  // Available time slots for doctors (9 AM to 5 PM)
+  const timeSlots = [
+    '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
+    '12:00 PM', '12:30 PM', '01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM',
+    '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM'
+  ];
 
   const doctors = [
     {
@@ -77,11 +86,6 @@ function DoctorConsultation() {
     }
   ];
 
-  useEffect(() => {
-    loadAppointments();
-    loadChatHistory();
-  }, []);
-
   const loadAppointments = () => {
     const saved = localStorage.getItem('appointments');
     if (saved) {
@@ -106,6 +110,148 @@ function DoctorConsultation() {
     setChatMessages(messages);
   };
 
+  const showNotification = (title, message) => {
+    // Check if browser supports notifications
+    if ('Notification' in window) {
+      if (Notification.permission === 'granted') {
+        new Notification(title, { body: message, icon: '👩‍⚕️' });
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            new Notification(title, { body: message, icon: '👩‍⚕️' });
+          }
+        });
+      }
+    }
+    
+    // Also show in-app alert
+    alert(`${title}\n\n${message}`);
+  };
+
+  const updateAppointmentStatuses = () => {
+    setAppointments(prevAppointments => {
+      const now = new Date();
+      let updated = false;
+      
+      const updatedAppointments = prevAppointments.map(appointment => {
+        if (appointment.status === 'scheduled') {
+          const appointmentDateTime = new Date(`${appointment.date}T${appointment.timeSlot}`);
+          const timeDiff = appointmentDateTime - now;
+          
+          // If appointment time has passed by more than 15 minutes, mark as missed
+          if (timeDiff < -15 * 60 * 1000) {
+            updated = true;
+            return { ...appointment, status: 'missed' };
+          }
+        }
+        return appointment;
+      });
+
+      if (updated) {
+        localStorage.setItem('appointments', JSON.stringify(updatedAppointments));
+        return updatedAppointments;
+      }
+      return prevAppointments;
+    });
+  };
+
+  const checkUpcomingReminders = () => {
+    setAppointments(prevAppointments => {
+      const now = new Date();
+      let updated = false;
+      
+      const updatedAppointments = prevAppointments.map(appointment => {
+        if (appointment.status === 'scheduled') {
+          const appointmentDateTime = new Date(`${appointment.date}T${appointment.timeSlot}`);
+          const timeDiff = appointmentDateTime - now;
+          
+          // Only send reminders if appointment is in the future
+          if (timeDiff > 0) {
+            // Remind 15 minutes before (only once)
+            if (timeDiff <= 15 * 60 * 1000 && timeDiff > 14 * 60 * 1000 && !appointment.reminded15min) {
+              showNotification(
+                'Appointment Reminder',
+                `Your appointment with ${appointment.doctorName} is in 15 minutes!`
+              );
+              updated = true;
+              return { ...appointment, reminded15min: true };
+            }
+            
+            // Remind 1 hour before (only once)
+            if (timeDiff <= 60 * 60 * 1000 && timeDiff > 59 * 60 * 1000 && !appointment.reminded1hour) {
+              showNotification(
+                'Appointment Reminder',
+                `Your appointment with ${appointment.doctorName} is in 1 hour!`
+              );
+              updated = true;
+              return { ...appointment, reminded1hour: true };
+            }
+          }
+        }
+        return appointment;
+      });
+
+      if (updated) {
+        localStorage.setItem('appointments', JSON.stringify(updatedAppointments));
+        return updatedAppointments;
+      }
+      return prevAppointments;
+    });
+  };
+
+  useEffect(() => {
+    loadAppointments();
+    loadChatHistory();
+    
+    // Check appointment statuses every minute
+    const statusInterval = setInterval(() => {
+      updateAppointmentStatuses();
+      checkUpcomingReminders();
+    }, 60000); // Check every minute
+
+    // Initial check after 1 second to allow state to load
+    const initialCheck = setTimeout(() => {
+      updateAppointmentStatuses();
+      checkUpcomingReminders();
+    }, 1000);
+
+    return () => {
+      clearInterval(statusInterval);
+      clearTimeout(initialCheck);
+    };
+  }, []); // Empty dependency array - only run once on mount
+
+  const canJoinCall = (appointment) => {
+    const now = new Date();
+    const appointmentDateTime = new Date(`${appointment.date}T${appointment.timeSlot}`);
+    const timeDiff = appointmentDateTime - now;
+    
+    // Can join 15 minutes before to 15 minutes after
+    return timeDiff >= -15 * 60 * 1000 && timeDiff <= 15 * 60 * 1000;
+  };
+
+  const getTimeUntilAppointment = (appointment) => {
+    const now = new Date();
+    const appointmentDateTime = new Date(`${appointment.date}T${appointment.timeSlot}`);
+    const timeDiff = appointmentDateTime - now;
+    
+    if (timeDiff < 0) {
+      return 'Time passed';
+    }
+    
+    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (hours > 24) {
+      const days = Math.floor(hours / 24);
+      return `in ${days} day${days > 1 ? 's' : ''}`;
+    } else if (hours > 0) {
+      return `in ${hours}h ${minutes}m`;
+    } else {
+      return `in ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+    }
+  };
+
   const handleBookAppointment = (doctor) => {
     setSelectedDoctor(doctor);
     setBookingForm({ ...bookingForm, doctorId: doctor.id });
@@ -114,25 +260,64 @@ function DoctorConsultation() {
 
   const handleSubmitBooking = (e) => {
     e.preventDefault();
+    
+    // Validate payment method is selected
+    if (!bookingForm.paymentMethod) {
+      alert('Please select a payment method');
+      return;
+    }
+
+    // Process payment (in real app, integrate with payment gateway)
+    const paymentSuccess = processPayment(bookingForm.paymentMethod, selectedDoctor.consultationFee);
+    
+    if (!paymentSuccess) {
+      alert('Payment failed. Please try again.');
+      return;
+    }
+
     const newAppointment = {
       id: Date.now(),
       ...bookingForm,
       doctorName: selectedDoctor.name,
       doctorSpecialty: selectedDoctor.specialty,
+      consultationFee: selectedDoctor.consultationFee,
       status: 'scheduled',
+      paymentStatus: 'paid',
       createdAt: new Date().toISOString()
     };
+    
     saveAppointments([...appointments, newAppointment]);
     setShowBookingForm(false);
-    setBookingForm({ doctorId: '', date: '', time: '', type: 'video', reason: '' });
-    alert('Appointment booked successfully!');
+    setBookingForm({ doctorId: '', date: '', timeSlot: '', type: 'video', reason: '', paymentMethod: 'card' });
+    alert(`Appointment booked successfully!\n\nPayment of ${selectedDoctor.consultationFee} processed.\nYou will receive reminders before your appointment.`);
+  };
+
+  const processPayment = (method, amount) => {
+    // Simulate payment processing
+    // In real app, integrate with Stripe, PayPal, etc.
+    console.log(`Processing payment: ${amount} via ${method}`);
+    
+    // Simulate payment success
+    return true;
   };
 
   const handleJoinCall = (appointment) => {
+    if (!canJoinCall(appointment)) {
+      alert('You can only join the call 15 minutes before to 15 minutes after the scheduled time.');
+      return;
+    }
+
     // Simulate joining a video call
     const callUrl = `https://meet.google.com/new`; // Or use any video conferencing service
     alert(`Joining video call with ${appointment.doctorName}...\n\nIn a real application, this would:\n1. Open a video call interface\n2. Connect you with the doctor\n3. Enable audio/video communication\n\nFor demo purposes, opening a new meeting link...`);
     window.open(callUrl, '_blank');
+  };
+
+  const handleCompleteAppointment = (id) => {
+    const updatedAppointments = appointments.map(a => 
+      a.id === id ? { ...a, status: 'completed' } : a
+    );
+    saveAppointments(updatedAppointments);
   };
 
   const handleCancelAppointment = (id) => {
@@ -156,16 +341,38 @@ function DoctorConsultation() {
     saveChatMessages(updatedMessages);
     setMessageInput('');
 
-    // Simulate doctor response
+    // Simulate AI response
     setTimeout(() => {
-      const doctorResponse = {
+      const aiResponse = {
         id: Date.now() + 1,
-        text: 'Thank you for your message. A doctor will respond shortly. For urgent matters, please book a video consultation.',
-        sender: 'doctor',
+        text: 'Thank you for your message. Our AI assistant is analyzing your query. For immediate assistance, try our video or voice call options above!',
+        sender: 'ai',
         timestamp: new Date().toISOString()
       };
-      saveChatMessages([...updatedMessages, doctorResponse]);
-    }, 2000);
+      saveChatMessages([...updatedMessages, aiResponse]);
+    }, 1500);
+  };
+
+  const handleAICall = (type) => {
+    const callType = type === 'video' ? 'Video' : 'Voice';
+    
+    alert(`🤖 Starting AI ${callType} Call...\n\n✅ FREE - No charges\n✅ Available now - No waiting\n✅ Instant connection\n\nIn a real application, this would:\n1. Open ${callType.toLowerCase()} call interface\n2. Connect you with AI assistant\n3. Enable ${type === 'video' ? 'video and audio' : 'audio only'} communication\n4. Provide real-time AI medical guidance\n\nFor demo purposes, opening call interface...`);
+    
+    // Simulate opening call interface
+    const callUrl = type === 'video' 
+      ? 'https://meet.google.com/new' 
+      : 'https://meet.google.com/new';
+    
+    window.open(callUrl, '_blank');
+    
+    // Log the call in chat
+    const callMessage = {
+      id: Date.now(),
+      text: `Started AI ${callType} Call - FREE consultation`,
+      sender: 'system',
+      timestamp: new Date().toISOString()
+    };
+    saveChatMessages([...chatMessages, callMessage]);
   };
 
   const handleLogout = () => {
@@ -176,10 +383,26 @@ function DoctorConsultation() {
   const getStatusColor = (status) => {
     switch(status) {
       case 'scheduled': return '#10b981';
+      case 'upcoming': return '#3b82f6';
       case 'completed': return '#6b7280';
+      case 'missed': return '#f59e0b';
       case 'cancelled': return '#ef4444';
       default: return '#6b7280';
     }
+  };
+
+  const getStatusText = (appointment) => {
+    if (appointment.status === 'scheduled') {
+      const now = new Date();
+      const appointmentDateTime = new Date(`${appointment.date}T${appointment.time}`);
+      const timeDiff = appointmentDateTime - now;
+      
+      // If within 1 hour, show as "Upcoming"
+      if (timeDiff > 0 && timeDiff <= 60 * 60 * 1000) {
+        return 'upcoming';
+      }
+    }
+    return appointment.status;
   };
 
   return (
@@ -201,7 +424,6 @@ function DoctorConsultation() {
             </div>
           </div>
           <div className="header-actions">
-            <LanguageSelector />
             <ThemeToggle />
             <div className="privacy-badge">
               <Shield size={16} />
@@ -209,6 +431,7 @@ function DoctorConsultation() {
             </div>
             <button onClick={handleLogout} className="btn-secondary">Logout</button>
           </div>
+          <LanguageSelector />
         </div>
       </header>
 
@@ -307,63 +530,112 @@ function DoctorConsultation() {
               </div>
             ) : (
               <div className="appointments-list">
-                {appointments.map(appointment => (
-                  <div key={appointment.id} className="appointment-card">
-                    <div className="appointment-header">
-                      <div>
-                        <h3>{appointment.doctorName}</h3>
-                        <p className="appointment-specialty">{appointment.doctorSpecialty}</p>
-                      </div>
-                      <span 
-                        className="status-badge"
-                        style={{background: getStatusColor(appointment.status)}}
-                      >
-                        {appointment.status}
-                      </span>
-                    </div>
+                {appointments.map(appointment => {
+                  const statusText = getStatusText(appointment);
+                  const timeUntil = getTimeUntilAppointment(appointment);
+                  const joinable = canJoinCall(appointment);
 
-                    <div className="appointment-details">
-                      <div className="detail-item">
-                        <Calendar size={16} />
-                        <span>{new Date(appointment.date).toLocaleDateString()}</span>
+                  return (
+                    <div key={appointment.id} className="appointment-card">
+                      <div className="appointment-header">
+                        <div>
+                          <h3>{appointment.doctorName}</h3>
+                          <p className="appointment-specialty">{appointment.doctorSpecialty}</p>
+                        </div>
+                        <span 
+                          className="status-badge"
+                          style={{background: getStatusColor(statusText)}}
+                        >
+                          {statusText}
+                        </span>
                       </div>
-                      <div className="detail-item">
-                        <Clock size={16} />
-                        <span>{appointment.time}</span>
-                      </div>
-                      <div className="detail-item">
-                        {appointment.type === 'video' ? <Video size={16} /> : <Phone size={16} />}
-                        <span>{appointment.type === 'video' ? 'Video Call' : 'Phone Call'}</span>
-                      </div>
-                    </div>
 
-                    {appointment.reason && (
-                      <div className="appointment-reason">
-                        <strong>Reason:</strong> {appointment.reason}
+                      <div className="appointment-details">
+                        <div className="detail-item">
+                          <Calendar size={16} />
+                          <span>{new Date(appointment.date).toLocaleDateString()}</span>
+                        </div>
+                        <div className="detail-item">
+                          <Clock size={16} />
+                          <span>{appointment.timeSlot}</span>
+                        </div>
+                        <div className="detail-item">
+                          {appointment.type === 'video' ? <Video size={16} /> : <Phone size={16} />}
+                          <span>{appointment.type === 'video' ? 'Video Call' : 'Phone Call'}</span>
+                        </div>
+                        {appointment.paymentStatus && (
+                          <div className="detail-item">
+                            <span className="payment-badge">✓ Paid {appointment.consultationFee}</span>
+                          </div>
+                        )}
                       </div>
-                    )}
 
-                    <div className="appointment-actions">
                       {appointment.status === 'scheduled' && (
-                        <>
-                          <button 
-                            className="btn-primary"
-                            onClick={() => handleJoinCall(appointment)}
-                          >
-                            <Video size={18} />
-                            Join Call
-                          </button>
-                          <button 
-                            onClick={() => handleCancelAppointment(appointment.id)}
-                            className="btn-secondary"
-                          >
-                            Cancel
-                          </button>
-                        </>
+                        <div className="appointment-countdown">
+                          <Clock size={16} />
+                          <span>{timeUntil}</span>
+                          {!joinable && (
+                            <span className="join-window-info">
+                              (Join available 15 min before)
+                            </span>
+                          )}
+                        </div>
                       )}
+
+                      {appointment.reason && (
+                        <div className="appointment-reason">
+                          <strong>Reason:</strong> {appointment.reason}
+                        </div>
+                      )}
+
+                      <div className="appointment-actions">
+                        {appointment.status === 'scheduled' && (
+                          <>
+                            <button 
+                              className={`btn-primary ${!joinable ? 'disabled' : ''}`}
+                              onClick={() => handleJoinCall(appointment)}
+                              disabled={!joinable}
+                              title={!joinable ? 'Available 15 minutes before appointment' : 'Join video call'}
+                            >
+                              <Video size={18} />
+                              {joinable ? 'Join Call' : 'Not Available Yet'}
+                            </button>
+                            {joinable && (
+                              <button 
+                                onClick={() => handleCompleteAppointment(appointment.id)}
+                                className="btn-secondary"
+                              >
+                                Mark Complete
+                              </button>
+                            )}
+                            <button 
+                              onClick={() => handleCancelAppointment(appointment.id)}
+                              className="btn-secondary"
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        )}
+                        {appointment.status === 'missed' && (
+                          <div className="missed-info">
+                            <span>⚠️ You missed this appointment. Please reschedule.</span>
+                            <button 
+                              onClick={() => setActiveTab('doctors')}
+                              className="btn-primary"
+                            >
+                              Book New Appointment
+                            </button>
+                          </div>
+                        )}
+                        {appointment.status === 'completed' && (
+                          <div className="completed-info">
+                            <span>✅ Consultation completed</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -372,10 +644,56 @@ function DoctorConsultation() {
         {/* Chat Support */}
         {activeTab === 'chat' && (
           <div className="chat-section">
+            <div className="ai-chat-notice">
+              <div className="notice-icon">🤖</div>
+              <div className="notice-content">
+                <h4>AI Medical Assistant - Always Available & FREE</h4>
+                <p>
+                  Our AI assistant is available 24/7 for FREE consultations via chat, voice, or video call. 
+                  No appointment needed, no payment required!
+                </p>
+              </div>
+            </div>
+
+            {/* AI Call Options */}
+            <div className="ai-call-options">
+              <h4>Connect with AI Assistant</h4>
+              <div className="call-options-grid">
+                <button 
+                  className="call-option-btn video-call"
+                  onClick={() => handleAICall('video')}
+                >
+                  <Video size={32} />
+                  <span>Video Call</span>
+                  <small>Face-to-face AI consultation</small>
+                  <div className="free-badge">FREE</div>
+                </button>
+                <button 
+                  className="call-option-btn voice-call"
+                  onClick={() => handleAICall('voice')}
+                >
+                  <Phone size={32} />
+                  <span>Voice Call</span>
+                  <small>Audio-only AI consultation</small>
+                  <div className="free-badge">FREE</div>
+                </button>
+                <button 
+                  className="call-option-btn text-chat active"
+                  onClick={() => {}}
+                >
+                  <MessageCircle size={32} />
+                  <span>Text Chat</span>
+                  <small>Message-based support</small>
+                  <div className="free-badge">FREE</div>
+                </button>
+              </div>
+            </div>
+
             <div className="chat-container">
               <div className="chat-header">
                 <MessageCircle size={20} />
-                <h3>Chat with Medical Support</h3>
+                <h3>Chat with AI Medical Support</h3>
+                <span className="online-badge">● Always Online</span>
               </div>
 
               <div className="chat-messages">
@@ -383,7 +701,7 @@ function DoctorConsultation() {
                   <div className="chat-empty">
                     <MessageCircle size={48} color="#ccc" />
                     <p>No messages yet</p>
-                    <p className="empty-subtitle">Start a conversation with our medical support team</p>
+                    <p className="empty-subtitle">Start a conversation with our AI medical assistant</p>
                   </div>
                 ) : (
                   chatMessages.map(message => (
@@ -417,12 +735,14 @@ function DoctorConsultation() {
             </div>
 
             <div className="chat-info">
-              <h4>Quick Tips</h4>
+              <h4>AI Assistant Features</h4>
               <ul>
-                <li>Response time: Usually within 2-4 hours</li>
-                <li>For urgent matters, book a video consultation</li>
-                <li>Share your symptoms and concerns clearly</li>
-                <li>Keep your medical history handy</li>
+                <li>✅ Available 24/7 - No waiting time</li>
+                <li>✅ Completely FREE - No charges</li>
+                <li>✅ Instant responses via chat</li>
+                <li>✅ Video & voice call support</li>
+                <li>✅ General health guidance</li>
+                <li>⚠️ For serious issues, consult a real doctor</li>
               </ul>
             </div>
           </div>
@@ -460,27 +780,30 @@ function DoctorConsultation() {
                   </select>
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Date *</label>
-                    <input
-                      type="date"
-                      value={bookingForm.date}
-                      onChange={(e) => setBookingForm({...bookingForm, date: e.target.value})}
-                      min={new Date().toISOString().split('T')[0]}
-                      required
-                    />
-                  </div>
+                <div className="form-group">
+                  <label>Select Date *</label>
+                  <input
+                    type="date"
+                    value={bookingForm.date}
+                    onChange={(e) => setBookingForm({...bookingForm, date: e.target.value})}
+                    min={new Date().toISOString().split('T')[0]}
+                    required
+                  />
+                </div>
 
-                  <div className="form-group">
-                    <label>Time *</label>
-                    <input
-                      type="time"
-                      value={bookingForm.time}
-                      onChange={(e) => setBookingForm({...bookingForm, time: e.target.value})}
-                      required
-                    />
-                  </div>
+                <div className="form-group">
+                  <label>Select Time Slot *</label>
+                  <select
+                    value={bookingForm.timeSlot}
+                    onChange={(e) => setBookingForm({...bookingForm, timeSlot: e.target.value})}
+                    required
+                  >
+                    <option value="">Choose a time slot</option>
+                    {timeSlots.map(slot => (
+                      <option key={slot} value={slot}>{slot}</option>
+                    ))}
+                  </select>
+                  <small>Doctor available: 9:00 AM - 5:00 PM</small>
                 </div>
 
                 <div className="form-group">
@@ -494,9 +817,83 @@ function DoctorConsultation() {
                   />
                 </div>
 
+                <div className="payment-section">
+                  <div className="payment-header">
+                    <h4>Payment Details</h4>
+                    <div className="consultation-fee-display">
+                      <span>Consultation Fee:</span>
+                      <strong>{selectedDoctor.consultationFee}</strong>
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Payment Method *</label>
+                    <select
+                      value={bookingForm.paymentMethod}
+                      onChange={(e) => setBookingForm({...bookingForm, paymentMethod: e.target.value})}
+                      required
+                    >
+                      <option value="card">Credit/Debit Card</option>
+                      <option value="upi">UPI</option>
+                      <option value="netbanking">Net Banking</option>
+                      <option value="wallet">Digital Wallet</option>
+                    </select>
+                  </div>
+
+                  {bookingForm.paymentMethod === 'card' && (
+                    <>
+                      <div className="form-group">
+                        <label>Card Number *</label>
+                        <input
+                          type="text"
+                          placeholder="1234 5678 9012 3456"
+                          maxLength="19"
+                          required
+                        />
+                      </div>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Expiry *</label>
+                          <input
+                            type="text"
+                            placeholder="MM/YY"
+                            maxLength="5"
+                            required
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>CVV *</label>
+                          <input
+                            type="text"
+                            placeholder="123"
+                            maxLength="3"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {bookingForm.paymentMethod === 'upi' && (
+                    <div className="form-group">
+                      <label>UPI ID *</label>
+                      <input
+                        type="text"
+                        placeholder="yourname@upi"
+                        required
+                      />
+                    </div>
+                  )}
+
+                  <div className="payment-note">
+                    <span>🔒</span>
+                    <p>Your payment information is secure and encrypted</p>
+                  </div>
+                </div>
+
                 <div className="modal-actions">
                   <button type="submit" className="btn-primary">
-                    Confirm Booking
+                    Pay {selectedDoctor.consultationFee} & Confirm Booking
                   </button>
                   <button 
                     type="button" 

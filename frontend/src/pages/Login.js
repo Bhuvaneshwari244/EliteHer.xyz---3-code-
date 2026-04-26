@@ -25,11 +25,19 @@ function Login({ setAuth }) {
 
     try {
       const response = await authAPI.login(formData);
-      localStorage.setItem('token', response.data.access_token);
+      const token = response.data.access_token;
+      const user = response.data.user || { email: formData.email };
+      
+      // Store token and user info
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('loginTime', new Date().toISOString());
+      
       setAuth(true);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      setError(err.response?.data?.error || 'Login failed. Please check your credentials.');
+      console.error('Login error:', err);
     } finally {
       setLoading(false);
     }

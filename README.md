@@ -1,480 +1,253 @@
-# 🌸 Aura - Your Personal Period Health Companion
+# 🌸 Aura Period Tracker
 
-[![Elite Her Hackathon 2026](https://img.shields.io/badge/Elite%20Her-Hackathon%202026-purple)](https://eliteher.xyz)
-[![Problem Statement](https://img.shields.io/badge/Problem-Statement%20%239-blue)](https://eliteher.xyz/#problem-statements)
-[![Languages](https://img.shields.io/badge/Languages-12-success)](README.md)
-[![Features](https://img.shields.io/badge/Features-48+-orange)](README.md)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+**Version**: 1.1.0  
+**Status**: Active Development - Phase 4  
+**Last Updated**: April 26, 2026
 
-> **🌍 Empowering 5+ billion women worldwide with AI-powered health insights in 12 languages**
-
-<div align="center">
-  <img src="frontend/public/logo.svg" alt="Aura Logo" width="120"/>
-</div>
+A comprehensive, privacy-first period tracking application with 22+ features including gamification, voice journaling, and photo symptom tracking.
 
 ---
 
-## 🎯 Problem Statement
+## ✨ Key Features
 
-Many girls experience irregular periods but lack proper tools to track patterns, predict future cycles, or identify early signs of conditions like PCOD (Polycystic Ovary Disorder). Existing apps often fail to handle irregular cycles or provide meaningful health insights.
+### Core Tracking (Phases 1-3)
+- 📅 **Enhanced Cycle Tracker** - Period prediction, fertility tracking, ovulation detection
+- 💊 **Symptom Logger** - Track 25+ symptoms across 4 categories
+- 🔔 **Smart Reminders** - Period, ovulation, PMS, and medication reminders
+- 🌡️ **BBT Tracking** - Basal body temperature with ovulation detection
+- 💧 **Cervical Mucus Tracker** - Fertility indicators
+- 🤰 **Pregnancy Mode** - Week-by-week tracking, contraction timer, kick counter
+- 🔒 **Privacy & Security** - PIN lock, biometric auth, auto-lock
 
-### The Challenge
-- 🔴 1 in 10 women suffer from PCOD/PCOS
-- 🔴 70% of cases remain undiagnosed
-- 🔴 Existing apps fail with irregular periods
-- 🔴 No early detection tools available
-- 🔴 Lack of personalized health insights
+### Phase 4 Features (NEW!)
+- 🎯 **Health Goals** - Set and track personalized health objectives
+- 🏆 **Challenges & Achievements** - Gamified tracking with XP and levels
+- 🎤 **Voice Journal** - Voice-to-text with automatic mood detection
+- 📸 **Photo Symptom Tracker** - Visual tracking for skin conditions
 
----
-
-## 💡 Our Solution
-
-**Aura** is an AI-powered health companion that revolutionizes women's health tracking:
-
-✅ **Smart Cycle Tracking** - Handles irregular periods with adaptive algorithms  
-✅ **PCOD Risk Prediction** - ML-based early detection using 11 health parameters  
-✅ **Symptom Analysis** - Comprehensive tracking of mood, pain, and physical symptoms  
-✅ **Period Predictions** - AI-powered next cycle predictions with confidence scoring  
-✅ **Personalized Recommendations** - Actionable health insights based on your data  
-✅ **Medical Reports** - Export data for healthcare consultations  
+### Health Trackers (12 Total)
+Water, Exercise, Sleep, Nutrition, Medication, Supplements, Weight, Intimate Activity, and more!
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
+- Node.js 14+
 - Python 3.8+
-- Node.js 16+
 - npm or yarn
 
-### Backend Setup (5 minutes)
+### Installation
+
 ```bash
-cd backend
-python -m venv venv
+# Clone the repository
+git clone <your-repo-url>
+cd aura-period-tracker
 
-# Windows
-venv\Scripts\activate
-
-# macOS/Linux
-source venv/bin/activate
-
-pip install -r requirements.txt
-cp .env.example .env
-python app.py
-```
-✅ Backend running at `http://localhost:5000`
-
-### Frontend Setup (3 minutes)
-```bash
+# Install frontend dependencies
 cd frontend
 npm install
+
+# Install backend dependencies
+cd ../backend
+pip install -r requirements.txt
+
+# Set up environment variables
 cp .env.example .env
+# Edit .env with your configuration
+
+# Run the application
+# Terminal 1 - Backend
+cd backend
+python app.py
+
+# Terminal 2 - Frontend
+cd frontend
 npm start
 ```
-✅ Frontend running at `http://localhost:3000`
 
-### Test the App
-1. Register a new account
-2. Add 2-3 menstrual cycles
-3. Log daily symptoms
-4. Get your PCOD risk assessment
-5. View personalized recommendations
+The app will open at `http://localhost:3000`
 
 ---
 
-## 🌍 Multi-Language Support (12 Languages!)
+## 📊 Project Status
 
-**Complete translations for ALL sections in 12 languages:**
-- 🇬🇧 **English** - Full coverage
-- 🇮🇳 **हिंदी (Hindi)** - Full coverage  
-- 🇪🇸 **Español (Spanish)** - Full coverage
-- 🇫🇷 **Français (French)** - Full coverage
-- 🇩🇪 **Deutsch (German)** - Full coverage ✅ COMPLETED
-- 🇵🇹 **Português (Portuguese)** - Full coverage ✅ COMPLETED
-- 🇨🇳 **中文 (Chinese)** - Full coverage ✅ COMPLETED
-- 🇯🇵 **日本語 (Japanese)** - Full coverage ✅ COMPLETED
-- 🇰🇷 **한국어 (Korean)** - Full coverage ✅ COMPLETED
-- 🇦🇪 **العربية (Arabic)** - Full coverage ✅ COMPLETED
-- 🇷🇺 **Русский (Russian)** - Full coverage ✅ COMPLETED
-- 🇮🇹 **Italiano (Italian)** - Full coverage ✅ COMPLETED
-
-**Translation Coverage:**
-- ✅ Common UI elements (buttons, actions, loading states)
-- ✅ Navigation menu (all 10 pages)
-- ✅ Authentication (login, register)
-- ✅ Dashboard (welcome, stats, health score)
-- ✅ Cycle Tracker (flow intensity, history)
-- ✅ Symptom Logger (15+ symptoms)
-- ✅ Health Insights (AI predictions, trends)
-- ✅ Wellness Hub (water, exercise, sleep, nutrition, goals)
-- ✅ Settings (notifications, privacy, preferences)
-- ✅ Footer disclaimers
-
-**Global Reach: 5+ billion people worldwide!**
-
-### How to Use
-1. Click the � globe icon in the header
-2. Select your preferred language from the dropdown
-3. All UI text updates instantly
-4. Language preference is saved in browser localStorage
-
-### 🚀 NEW UNIQUE FEATURES (5 Features)
-- 🎤 **Voice Symptom Logger** - Hands-free symptom tracking with speech recognition
-- 🗺️ **Pain Heat Map** - Visual body diagram to track pain locations and intensity
-- ✨ **Hormone Horoscope** - Daily predictions based on your cycle phase
-- 📍 **Period Emergency Locator** - Find nearby pharmacies, restrooms, emergency help
-- 🥚 **Fertility Window Calculator** - Precise ovulation and conception probability tracking
-
-## ✨ Features (90+ Total!)
-
-### 🚀 UNIQUE ADVANCED FEATURES (40 Features)
-
-**✅ PCOD-SPECIFIC FEATURES (Fully Implemented):**
-1. 🎤 **Voice Symptom Logger** - Hands-free symptom tracking ✅
-2. 🗺️ **Pain Heat Map** - Visual body pain tracking ✅
-3. ✨ **Hormone Horoscope** - Daily cycle predictions ✅
-4. 📍 **Period Emergency Locator** - Find help nearby ✅
-5. 🥚 **Fertility Window Calculator** - Ovulation tracking ✅
-6. 💊 **Supplement Tracker** - Vitamin & mineral tracking ✅
-7. 🎗️ **Breast Self-Exam Reminders** - Monthly health checks ✅
-8. 🥗 **PCOD Diet Planner** - Meal plans & nutrition guide ✅
-9. 📊 **PCOD Symptom Tracker** - Daily symptom monitoring ✅
-10. 🏋️ **PCOD Exercise Planner** - Workout plans for PCOD ✅
-11. ⚖️ **PCOD Weight Tracker** - Weight management & BMI ✅
-9. 📅 **Cycle Sync Calendar** - Google Calendar integration
-10. 📸 **Smart Photo Diary** - Track physical changes with AI
-11. 💑 **Partner Mode** - Share cycle info with loved ones
-12. 🎵 **Mood-Based Music** - Spotify playlists by cycle phase
-13. 🏋️ **Cycle-Based Workouts** - Phase-optimized exercise plans
-14. 🍕 **Food Craving Tracker** - Understand hormone-food links
-15. 💊 **Photo Medication Reminders** - Visual pill tracking
-16. 🧴 **Cycle-Synced Skincare** - Phase-based beauty routine
-17. 💕 **Intimacy Tracker** - Fertility awareness method
-18. 🗣️ **Stress Voice Analysis** - AI stress detection
-19. 🔔 **Smart Reminders** - Predictive notifications
-20. 📊 **Cycle Comparison** - Anonymous community insights
-21. 👩‍⚕️ **Doctor Scheduler** - Auto-book appointments
-22. 🌍 **Period Poverty Donation** - Help women in need
-23. 💰 **Cycle-Based Budget** - Track spending patterns
-24. 🔮 **Symptom Predictions** - AI forecasting
-25. ❓ **Anonymous Q&A** - Expert gynecologist answers
-26. 👧 **Teen Tracker** - Age-appropriate content
-27. 🌡️ **Menopause Tracker** - Perimenopause support
-28. 💼 **Job Performance Insights** - Optimize work schedule
-29. 💧 **Gamified Water Tracker** - Plant growth rewards
-30. 😴 **Sleep Quality Analyzer** - Cycle-based sleep patterns
-31. 🧘 **Cycle-Synced Meditation** - Phase-specific mindfulness
-32. 👗 **Smart Clothing Integration** - Period-proof underwear sync
-33. 🗺️ **Symptom Severity Heatmap** - Visual calendar patterns
-34. 📝 **Anonymous Stories Blog** - Share your journey
-35. 🍳 **Cycle-Based Recipes** - Hormone-balancing meals
-36. 🏃 **Athlete Period Tracker** - Performance optimization
-37. 🤕 **Migraine Tracker** - Hormonal headache patterns
-38. 💭 **Daily Affirmations** - Cycle-synced positivity
-39. 🆘 **Emergency SOS Button** - One-tap help
-40. 🔬 **Research Contribution** - Anonymous data for science
-
-### 🎯 Core Tracking (10 Features)
-- 📅 Menstrual cycle tracking with flow intensity
-- 📊 Symptom tracking (15+ symptoms)
-- 😊 Mood tracking with emojis
-- 💊 Medication tracker
-- 📝 Daily notes and observations
-- 📈 Cycle history and patterns
-- 🔮 Next period prediction
-- 🥚 Ovulation tracking
-- 🌸 Fertile window calculation
-- 📆 Monthly calendar view
-
-### 🤖 AI & Machine Learning (5 Features)
-- 🧠 PCOD risk assessment (Random Forest ML)
-- 🔮 7-day symptom predictions
-- 📊 Pattern recognition by cycle phase
-- 🎯 Probability-based forecasting
-- 💡 Personalized recommendations
-
-### 📊 Health Analytics (8 Features)
-- 🌙 Cycle phase indicator
-- 📈 Symptom insights with charts
-- 😊 Mood trends visualization
-- 📊 Data visualization dashboard
-- 🥚 Fertility calculator
-- 🏆 Health score calculation
-- ⚡ Quick stats dashboard
-- 🔥 Streak tracking with gamification
-
-### 💪 Wellness Tracking (7 Features)
-- 💧 Water intake tracker (8 glasses/day)
-- 🏃‍♀️ Exercise logger (9 types)
-- 😴 Sleep tracker with quality rating
-- 🍎 Nutrition tracker with calories
-- 🎯 Goal tracker (5 categories)
-- 💊 Medication tracker
-- 🔔 Smart reminders
-
-### 👥 Community & Support (4 Features)
-- 💬 Community stories sharing
-- 💡 Health tips library
-- 📚 Educational resources
-- 🤖 AI health chatbot (9 topics)
-
-### 👩‍⚕️ Medical Integration (3 Features)
-- 📞 Doctor consultation booking
-- 🚨 Emergency contacts management
-- 📄 PDF health report export
-
-### 🎨 UI/UX Features
-- 🌓 Dark/Light mode toggle
-- 📱 Fully responsive design
-- ✨ Smooth animations
-- 🎨 Beautiful coral/rose theme
-- 🔐 Privacy-first design
+- **Total Features**: 22 implemented (51 planned)
+- **Phase 1-3**: ✅ 100% Complete (18 features)
+- **Phase 4**: 🚧 12% Complete (4/33 features)
+- **Diagnostic Errors**: 0
+- **Code Quality**: Production-ready
 
 ---
 
-## 🛠️ Tech Stack
+## 📱 Features Overview
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | React.js, React Router, Axios, Lucide Icons |
-| **Backend** | Flask, Flask-JWT-Extended, Flask-CORS |
-| **ML/AI** | scikit-learn, Random Forest, StandardScaler |
-| **Database** | SQLite (dev), PostgreSQL (prod) |
-| **Auth** | JWT tokens, Werkzeug password hashing |
-| **Deployment** | Vercel (frontend), Heroku (backend) |
+### Cycle & Fertility Tracking
+- Period prediction with countdown
+- Cycle phase indicator (4 phases)
+- Fertility window calculation
+- Ovulation day prediction
+- Pregnancy chance indicator
+- Flow tracking (5 types)
 
----
+### Symptom & Health Monitoring
+- 25+ symptoms across categories
+- Intensity levels (1-5 scale)
+- 12 mood options
+- Pain level tracking
+- Photo symptom tracking
+- Voice journaling
 
-## 📁 Project Structure
+### Gamification & Motivation
+- XP and leveling system
+- 8 challenges
+- 10 achievements
+- Streak tracking
+- Goal setting
+- Progress visualization
 
-```
-period-health-tracker/
-├── backend/
-│   ├── app.py                    # Flask application
-│   ├── requirements.txt          # Python dependencies
-│   ├── models/
-│   │   └── pcod_predictor.py   # ML model
-│   └── routes/
-│       ├── auth.py              # Authentication
-│       ├── cycles.py            # Cycle tracking
-│       ├── symptoms.py          # Symptom logging
-│       └── predictions.py       # PCOD assessment
-├── frontend/
-│   ├── package.json             # Node dependencies
-│   ├── src/
-│   │   ├── App.js              # Main component
-│   │   ├── services/api.js     # API layer
-│   │   └── pages/              # React pages
-│   │       ├── Dashboard.js
-│   │       ├── CycleTracker.js
-│   │       ├── SymptomLogger.js
-│   │       └── PCODAssessment.js
-├── README.md                    # This file
-├── SETUP_GUIDE.md              # Detailed setup
-├── PRESENTATION.md             # Hackathon presentation
-├── FEATURES.md                 # Complete feature list
-└── PROJECT_SUMMARY.md          # Technical summary
-```
+### Privacy & Security
+- PIN lock protection
+- Biometric authentication
+- Auto-lock functionality
+- Private mode
+- Local data storage
+- No cloud dependency
 
 ---
 
-## 🤖 Machine Learning Model
+## 🎯 Roadmap
 
-### PCOD Risk Prediction
+### Completed (Phases 1-3)
+✅ Enhanced cycle tracking  
+✅ Comprehensive symptom logging  
+✅ Smart reminders system  
+✅ BBT & cervical mucus tracking  
+✅ Pregnancy mode  
+✅ Privacy & security features  
 
-**Input Features (11 parameters):**
-1. Age
-2. Cycle irregularity score (0-10)
-3. Average cycle length
-4. Recent weight gain
-5. Acne severity (0-10)
-6. Excessive hair growth (0-10)
-7. Hair loss (0-10)
-8. Mood swings (0-10)
-9. Fatigue level (0-10)
-10. Sleep quality (0-10)
-11. Stress level (0-10)
+### In Progress (Phase 4)
+✅ Health goals tracker  
+✅ Challenges & achievements  
+✅ Voice journal  
+✅ Photo symptom tracker  
+� AI health assistant  
+🔄 Partner/spouse mode  
+🔄 Telemedicine integration  
 
-**Output:**
-- Risk Level: Low / Moderate / High
-- Probability: 0-100%
-- Personalized Recommendations
-
-**Algorithm:** Random Forest Classifier with rule-based fallback
-
----
-
-## 📡 API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/profile` - Get user profile
-
-### Cycles
-- `POST /api/cycles` - Add new cycle
-- `GET /api/cycles` - Get all cycles
-- `GET /api/cycles/stats` - Get statistics
-- `GET /api/cycles/predict-next` - Predict next period
-
-### Symptoms
-- `POST /api/symptoms` - Log symptom
-- `GET /api/symptoms` - Get all symptoms
-- `GET /api/symptoms/analysis` - Get analysis
-
-### Predictions
-- `POST /api/predictions/pcod-risk` - Manual assessment
-- `GET /api/predictions/pcod-risk/auto` - Auto assessment
+### Planned (Phase 4 Continued)
+� Native mobile apps (iOS/Android)  
+� ML-based predictions  
+� Social features  
+� Advanced analytics  
+📋 Premium subscription tiers  
 
 ---
 
-## 📸 Screenshots
+## 📚 Documentation
 
-### Dashboard
-![Dashboard](https://via.placeholder.com/800x400?text=Dashboard+Screenshot)
-
-### PCOD Assessment
-![PCOD Assessment](https://via.placeholder.com/800x400?text=PCOD+Assessment+Screenshot)
-
-### Cycle Tracker
-![Cycle Tracker](https://via.placeholder.com/800x400?text=Cycle+Tracker+Screenshot)
-
----
-
-## 🎯 Impact & Market
-
-### Target Audience
-- Women aged 15-45
-- 1.9 billion globally
-- Especially those with irregular cycles
-
-### Market Potential
-- $50B+ femtech market by 2025
-- 116 million women with PCOS worldwide
-- Growing health tech adoption
-
-### Social Impact
-- Early PCOD detection saves lives
-- Reduces healthcare costs
-- Empowers women with data
-- Improves quality of life
+- **[PROJECT_STATUS_APRIL_2026.md](PROJECT_STATUS_APRIL_2026.md)** - Complete project status and metrics
+- **[LATEST_UPDATES.md](LATEST_UPDATES.md)** - Recent changes and new features
+- **[PHASE_4_IMPLEMENTED.md](PHASE_4_IMPLEMENTED.md)** - Phase 4 features documentation
+- **[COMPLETE_FEATURES_SUMMARY.md](COMPLETE_FEATURES_SUMMARY.md)** - All features list
+- **[COMPLETE_ROADMAP.md](COMPLETE_ROADMAP.md)** - Full development roadmap
+- **[PHASE_4_NEXT_GEN_FEATURES.md](PHASE_4_NEXT_GEN_FEATURES.md)** - Planned Phase 4 features
+- **[DEPLOYMENT_READY.md](DEPLOYMENT_READY.md)** - Deployment guide and checklist
+- **[DOCTOR_CONSULTATION_FEATURES.md](DOCTOR_CONSULTATION_FEATURES.md)** - Telemedicine features
 
 ---
 
-## 🗺️ Roadmap
+## �️ Tech Stack
 
-### ✅ Phase 1 (Current)
-- Core tracking features
-- PCOD risk prediction
-- Web application
+### Frontend
+- React 18+
+- React Router v6
+- Lucide React (icons)
+- Web Speech API (voice features)
+- FileReader API (photo upload)
+- LocalStorage API
+- Custom CSS (5000+ lines)
 
-### 📱 Phase 2 (3 months)
-- Mobile apps (iOS/Android)
-- Push notifications
-- Enhanced ML models
-
-### ⌚ Phase 3 (6 months)
-- Wearable integration
-- Telemedicine consultations
-- Fertility tracking
-
-### 🤖 Phase 4 (1 year)
-- AI health chatbot
-- Healthcare provider integration
-- Insurance partnerships
+### Backend
+- Python/Flask
+- JWT Authentication
+- RESTful API
+- PostgreSQL/SQLite
 
 ---
 
-## 🏆 Why Aura Wins
+## � Design
 
-### Competitive Advantages
-| Feature | Aura | Competitors |
-|---------|------|-------------|
-| **Languages** | **12** | 1-3 |
-| **Total Features** | **48+** | 10-20 |
-| **AI Predictions** | ✅ | ❌ |
-| **Health Score** | ✅ | ❌ |
-| **Community** | ✅ | Limited |
-| **Doctor Booking** | ✅ | ❌ |
-| **Emergency Contacts** | ✅ | ❌ |
-| **Gamification** | ✅ | ❌ |
-| **Global Reach** | **5B+** | <1B |
+- **Mobile-first** responsive design
+- **Dark mode** support
+- **Smooth animations** and transitions
+- **Accessible** UI components
+- **Color-coded** features
+- **Intuitive** navigation
 
-### Market Potential
-- **Target Users**: 2.3+ billion women globally
-- **Languages**: 12 major world languages
-- **Addressable Market**: $50B+ femtech industry
-- **Social Impact**: Early PCOD detection, health empowerment
+---
 
-## 📚 Additional Documentation
+## 🔐 Privacy & Security
 
-- **[Setup Guide](SETUP_GUIDE.md)** - Detailed installation
-- **[Deployment Guide](DEPLOYMENT.md)** - Production deployment
-- **[Features List](FEATURES.md)** - Complete features
-- **[Presentation](PRESENTATION.md)** - Hackathon pitch
+- **Local-first**: All data stored on your device
+- **No tracking**: No analytics by default
+- **Encrypted**: Local data encryption
+- **User control**: Export/delete anytime
+- **Optional sync**: Backend sync available
+- **GDPR compliant**: Privacy-focused design
+
+---
+
+## � Statistics
+
+- **Components**: 40+
+- **Pages**: 12
+- **Features**: 22
+- **Trackers**: 12
+- **CSS Lines**: 5000+
+- **Challenges**: 8
+- **Achievements**: 10
+- **Symptom Types**: 25+
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+This is a personal project, but suggestions and feedback are welcome!
 
 ---
 
-## 🏆 Elite Her Hackathon 2026
+## � License
 
-This project was built for the Elite Her Hackathon 2026, addressing Problem Statement #9: Smart Period Tracking & PCOD Risk Prediction System.
-
-**Team:** [Your Team Name]  
-**Hackathon:** Elite Her 2026  
-**Problem Statement:** #9 - Period Tracking & PCOD Prediction  
+[Your License Here]
 
 ---
 
-## 📄 License
+## � Unique Selling Points
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👥 Team
-
-- **[Your Name]** - Full Stack Developer
-- **[Team Member 2]** - ML Engineer
-- **[Team Member 3]** - UI/UX Designer
-
----
-
-## 📞 Contact
-
-- **Email:** [your-email]
-- **LinkedIn:** [your-profile]
-- **GitHub:** [your-github]
-- **Website:** [your-website]
+1. **Most Comprehensive** - 22 features, 12 trackers
+2. **Gamification** - XP, levels, achievements
+3. **Voice Powered** - Voice journaling with mood detection
+4. **Visual Tracking** - Photo symptom tracker
+5. **Privacy First** - Local storage, user control
+6. **Offline Capable** - Works without internet
+7. **Beautiful UI** - Modern, responsive design
+8. **Free & Open** - All features unlocked
 
 ---
 
-## 🙏 Acknowledgments
+## 📞 Support
 
-- Elite Her Hackathon organizers
-- Mentors and judges
-- Open source community
-- All women fighting PCOD/PCOS
+For questions or issues, please refer to the documentation files or create an issue in the repository.
 
 ---
 
-<div align="center">
+## 🎉 Acknowledgments
 
-**Built with ❤️ for Elite Her Hackathon 2026**
+Built with ❤️ for women's health tracking and wellness.
 
-*Empowering women through technology, one cycle at a time.*
+---
 
-[Demo](your-demo-url) • [Documentation](SETUP_GUIDE.md) • [Report Bug](issues) • [Request Feature](issues)
+**Aura Period Tracker** - Your comprehensive health companion 🌸
 
-</div>
+*Empowering women with data-driven health insights*

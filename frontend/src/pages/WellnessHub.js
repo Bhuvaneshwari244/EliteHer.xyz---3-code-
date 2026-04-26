@@ -4,7 +4,7 @@ import { cyclesAPI } from '../services/api';
 import { Shield, ArrowLeft } from 'lucide-react';
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import { WellnessTips } from '../components/WellnessTips';
-import { SmartReminders } from '../components/SmartReminders';
+import SmartReminders from '../components/SmartReminders';
 import { HealthChatbot } from '../components/HealthChatbot';
 import Navigation from '../components/Navigation';
 import ThemeToggle from '../components/ThemeToggle';
@@ -70,7 +70,6 @@ function WellnessHub() {
             </div>
           </div>
           <div className="header-actions">
-            <LanguageSelector />
             <ThemeToggle />
             <div className="privacy-badge">
               <Shield size={16} />
@@ -78,6 +77,7 @@ function WellnessHub() {
             </div>
             <button onClick={handleLogout} className="btn-secondary">Logout</button>
           </div>
+          <LanguageSelector />
         </div>
       </header>
 

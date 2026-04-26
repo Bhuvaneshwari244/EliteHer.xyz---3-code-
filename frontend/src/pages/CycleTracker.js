@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cyclesAPI } from '../services/api';
-import { Plus, Shield, ArrowLeft } from 'lucide-react';
+import { Plus, Shield, ArrowLeft, Calendar, Heart, TrendingUp, AlertCircle, Bell, Droplet, Activity } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import ThemeToggle from '../components/ThemeToggle';
@@ -14,12 +14,32 @@ function CycleTracker() {
   const [formData, setFormData] = useState({
     start_date: '',
     end_date: '',
-    flow_intensity: 'medium'
+    flow_intensity: 'medium',
+    flow_type: 'normal' // spotting, light, medium, heavy, very_heavy
+  });
+
+  // Cycle predictions and insights
+  const [cycleInsights, setCycleInsights] = useState({
+    nextPeriod: null,
+    daysUntilPeriod: 0,
+    currentPhase: '',
+    fertileWindow: { start: null, end: null },
+    ovulationDay: null,
+    pregnancyChance: 'low',
+    cycleLength: 28,
+    periodLength: 5,
+    isRegular: true
   });
 
   useEffect(() => {
     fetchCycles();
   }, []);
+
+  useEffect(() => {
+    if (cycles.length > 0) {
+      calculateCycleInsights();
+    }
+  }, [cycles]);
 
   const fetchCycles = async () => {
     try {
@@ -27,7 +47,99 @@ function CycleTracker() {
       setCycles(response.data.cycles);
     } catch (error) {
       console.error('Error fetching cycles:', error);
+      // Load from localStorage as fallback
+      const savedCycles = localStorage.getItem('cycles');
+      if (savedCycles) {
+        setCycles(JSON.parse(savedCycles));
+      }
     }
+  };
+
+  const calculateCycleInsights = () => {
+    if (cycles.length === 0) return;
+
+    // Sort cycles by date
+    const sortedCycles = [...cycles].sort((a, b) => 
+      new Date(b.start_date) - new Date(a.start_date)
+    );
+
+    const lastCycle = sortedCycles[0];
+    const lastStartDate = new Date(lastCycle.start_date);
+    
+    // Calculate average cycle length
+    let totalLength = 0;
+    let cycleLengths = [];
+    for (let i = 0; i < sortedCycles.length - 1; i++) {
+      const current = new Date(sortedCycles[i].start_date);
+      const next = new Date(sortedCycles[i + 1].start_date);
+      const length = Math.ceil((current - next) / (1000 * 60 * 60 * 24));
+      cycleLengths.push(length);
+      totalLength += length;
+    }
+    
+    const avgCycleLength = cycleLengths.length > 0 
+      ? Math.round(totalLength / cycleLengths.length) 
+      : 28;
+
+    // Check cycle regularity
+    const isRegular = cycleLengths.length > 0 
+      ? Math.max(...cycleLengths) - Math.min(...cycleLengths) <= 7
+      : true;
+
+    // Calculate next period date
+    const nextPeriodDate = new Date(lastStartDate);
+    nextPeriodDate.setDate(nextPeriodDate.getDate() + avgCycleLength);
+    
+    const today = new Date();
+    const daysUntil = Math.ceil((nextPeriodDate - today) / (1000 * 60 * 60 * 24));
+
+    // Calculate current cycle day
+    const daysSinceLastPeriod = Math.ceil((today - lastStartDate) / (1000 * 60 * 60 * 24));
+    
+    // Determine current phase
+    let currentPhase = '';
+    if (daysSinceLastPeriod <= 5) {
+      currentPhase = 'Menstrual';
+    } else if (daysSinceLastPeriod <= 13) {
+      currentPhase = 'Follicular';
+    } else if (daysSinceLastPeriod <= 15) {
+      currentPhase = 'Ovulation';
+    } else {
+      currentPhase = 'Luteal';
+    }
+
+    // Calculate ovulation day (typically day 14)
+    const ovulationDate = new Date(lastStartDate);
+    ovulationDate.setDate(ovulationDate.getDate() + 14);
+
+    // Calculate fertile window (5 days before ovulation + ovulation day)
+    const fertileStart = new Date(ovulationDate);
+    fertileStart.setDate(fertileStart.getDate() - 5);
+    const fertileEnd = new Date(ovulationDate);
+
+    // Determine pregnancy chance
+    let pregnancyChance = 'low';
+    if (today >= fertileStart && today <= fertileEnd) {
+      if (Math.abs(today - ovulationDate) <= 1) {
+        pregnancyChance = 'high';
+      } else {
+        pregnancyChance = 'medium';
+      }
+    }
+
+    setCycleInsights({
+      nextPeriod: nextPeriodDate,
+      daysUntilPeriod: daysUntil,
+      currentPhase,
+      fertileWindow: { start: fertileStart, end: fertileEnd },
+      ovulationDay: ovulationDate,
+      pregnancyChance,
+      cycleLength: avgCycleLength,
+      periodLength: lastCycle.end_date 
+        ? Math.ceil((new Date(lastCycle.end_date) - new Date(lastCycle.start_date)) / (1000 * 60 * 60 * 24))
+        : 5,
+      isRegular
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -35,10 +147,41 @@ function CycleTracker() {
     try {
       await cyclesAPI.addCycle(formData);
       setShowForm(false);
-      setFormData({ start_date: '', end_date: '', flow_intensity: 'medium' });
+      setFormData({ start_date: '', end_date: '', flow_intensity: 'medium', flow_type: 'normal' });
       fetchCycles();
     } catch (error) {
       console.error('Error adding cycle:', error);
+      // Save to localStorage as fallback
+      const savedCycles = JSON.parse(localStorage.getItem('cycles') || '[]');
+      const newCycle = {
+        id: Date.now(),
+        ...formData,
+        created_at: new Date().toISOString()
+      };
+      savedCycles.push(newCycle);
+      localStorage.setItem('cycles', JSON.stringify(savedCycles));
+      setCycles(savedCycles);
+      setShowForm(false);
+      setFormData({ start_date: '', end_date: '', flow_intensity: 'medium', flow_type: 'normal' });
+    }
+  };
+
+  const getPhaseColor = (phase) => {
+    switch(phase) {
+      case 'Menstrual': return '#ff6b9d';
+      case 'Follicular': return '#4ecdc4';
+      case 'Ovulation': return '#95e1d3';
+      case 'Luteal': return '#ffb6c1';
+      default: return '#ccc';
+    }
+  };
+
+  const getPregnancyChanceColor = (chance) => {
+    switch(chance) {
+      case 'high': return '#10b981';
+      case 'medium': return '#f59e0b';
+      case 'low': return '#6b7280';
+      default: return '#ccc';
     }
   };
 
@@ -66,7 +209,6 @@ function CycleTracker() {
             </div>
           </div>
           <div className="header-actions">
-            <LanguageSelector />
             <ThemeToggle />
             <div className="privacy-badge">
               <Shield size={16} />
@@ -74,38 +216,158 @@ function CycleTracker() {
             </div>
             <button onClick={handleLogout} className="btn-secondary">Logout</button>
           </div>
+          <LanguageSelector />
         </div>
       </header>
 
       <div className="page-container">
+      
+      {/* Cycle Insights Dashboard */}
+      <div className="cycle-insights-dashboard">
+        {/* Period Countdown Card */}
+        <div className="insight-card period-countdown">
+          <div className="insight-icon">
+            <Calendar size={32} color="#ff6b9d" />
+          </div>
+          <div className="insight-content">
+            <h3>Next Period</h3>
+            {cycleInsights.daysUntilPeriod > 0 ? (
+              <>
+                <div className="countdown-number">{cycleInsights.daysUntilPeriod}</div>
+                <p className="countdown-label">days away</p>
+                <small>{cycleInsights.nextPeriod?.toLocaleDateString()}</small>
+              </>
+            ) : cycleInsights.daysUntilPeriod === 0 ? (
+              <p className="period-today">Expected Today!</p>
+            ) : (
+              <div className="period-late">
+                <AlertCircle size={20} />
+                <p>{Math.abs(cycleInsights.daysUntilPeriod)} days late</p>
+              </div>
+            )}
+          </div>
+          {!cycleInsights.isRegular && (
+            <div className="irregular-badge">
+              <Bell size={14} />
+              <span>Irregular Cycle</span>
+            </div>
+          )}
+        </div>
+
+        {/* Current Phase Card */}
+        <div className="insight-card cycle-phase" style={{borderColor: getPhaseColor(cycleInsights.currentPhase)}}>
+          <div className="insight-icon">
+            <Activity size={32} color={getPhaseColor(cycleInsights.currentPhase)} />
+          </div>
+          <div className="insight-content">
+            <h3>Current Phase</h3>
+            <div className="phase-name" style={{color: getPhaseColor(cycleInsights.currentPhase)}}>
+              {cycleInsights.currentPhase}
+            </div>
+            <div className="phase-description">
+              {cycleInsights.currentPhase === 'Menstrual' && 'Your period is here. Rest and self-care time.'}
+              {cycleInsights.currentPhase === 'Follicular' && 'Energy rising! Great time for new activities.'}
+              {cycleInsights.currentPhase === 'Ovulation' && 'Peak fertility window. High energy levels.'}
+              {cycleInsights.currentPhase === 'Luteal' && 'Winding down. PMS may start soon.'}
+            </div>
+          </div>
+        </div>
+
+        {/* Fertility Window Card */}
+        <div className="insight-card fertility-window">
+          <div className="insight-icon">
+            <Heart size={32} color="#10b981" />
+          </div>
+          <div className="insight-content">
+            <h3>Fertility Status</h3>
+            <div className="fertility-status">
+              <div className={`pregnancy-chance ${cycleInsights.pregnancyChance}`}>
+                <span className="chance-dot" style={{background: getPregnancyChanceColor(cycleInsights.pregnancyChance)}}></span>
+                <span className="chance-text">{cycleInsights.pregnancyChance.toUpperCase()} Chance</span>
+              </div>
+            </div>
+            {cycleInsights.ovulationDay && (
+              <small>
+                Ovulation: {cycleInsights.ovulationDay.toLocaleDateString()}
+              </small>
+            )}
+          </div>
+        </div>
+
+        {/* Cycle Stats Card */}
+        <div className="insight-card cycle-stats">
+          <div className="insight-icon">
+            <TrendingUp size={32} color="#667eea" />
+          </div>
+          <div className="insight-content">
+            <h3>Cycle Statistics</h3>
+            <div className="stats-grid">
+              <div className="stat-item">
+                <span className="stat-label">Avg Cycle</span>
+                <span className="stat-value">{cycleInsights.cycleLength} days</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Period Length</span>
+                <span className="stat-value">{cycleInsights.periodLength} days</span>
+              </div>
+            </div>
+            <div className="regularity-indicator">
+              <span className={`regularity-badge ${cycleInsights.isRegular ? 'regular' : 'irregular'}`}>
+                {cycleInsights.isRegular ? '✓ Regular' : '⚠ Irregular'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <header className="page-header">
-        <h2>Your Cycles</h2>
+        <h2>Track Your Cycle</h2>
         <button onClick={() => setShowForm(!showForm)} className="btn-primary">
-          <Plus size={20} /> Add Cycle
+          <Plus size={20} /> Log Period
         </button>
       </header>
 
       {showForm && (
         <div className="form-card">
-          <h3>Log New Cycle</h3>
+          <h3>Log New Period</h3>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Start Date</label>
+              <label>Period Start Date *</label>
               <input
                 type="date"
                 value={formData.start_date}
                 onChange={(e) => setFormData({...formData, start_date: e.target.value})}
+                max={new Date().toISOString().split('T')[0]}
                 required
               />
             </div>
 
             <div className="form-group">
-              <label>End Date (optional)</label>
+              <label>Period End Date (optional)</label>
               <input
                 type="date"
                 value={formData.end_date}
                 onChange={(e) => setFormData({...formData, end_date: e.target.value})}
+                max={new Date().toISOString().split('T')[0]}
               />
+              <small>Leave empty if period is ongoing</small>
+            </div>
+
+            <div className="form-group">
+              <label>Flow Type *</label>
+              <div className="flow-options">
+                {['spotting', 'light', 'medium', 'heavy', 'very_heavy'].map(type => (
+                  <button
+                    key={type}
+                    type="button"
+                    className={`flow-option ${formData.flow_type === type ? 'active' : ''}`}
+                    onClick={() => setFormData({...formData, flow_type: type})}
+                  >
+                    <Droplet size={20} />
+                    <span>{type.replace('_', ' ')}</span>
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="form-group">
@@ -125,7 +387,7 @@ function CycleTracker() {
                 Cancel
               </button>
               <button type="submit" className="btn-primary">
-                Save Cycle
+                Save Period
               </button>
             </div>
           </form>
@@ -133,24 +395,39 @@ function CycleTracker() {
       )}
 
       <div className="cycles-list">
-        <h3>Your Cycle History</h3>
+        <h3>Period History</h3>
         {cycles.length === 0 ? (
-          <p className="empty-state">No cycles tracked yet. Start by adding your first cycle!</p>
+          <div className="empty-state">
+            <Calendar size={48} color="#ccc" />
+            <p>No periods tracked yet</p>
+            <p className="empty-subtitle">Start tracking to get personalized insights</p>
+          </div>
         ) : (
           <div className="cycles-grid">
             {cycles.map((cycle) => (
               <div key={cycle.id} className="cycle-card">
                 <div className="cycle-date">
-                  {new Date(cycle.start_date).toLocaleDateString()}
+                  {new Date(cycle.start_date).toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    year: 'numeric' 
+                  })}
                 </div>
                 {cycle.end_date && (
                   <div className="cycle-duration">
-                    Duration: {Math.ceil((new Date(cycle.end_date) - new Date(cycle.start_date)) / (1000 * 60 * 60 * 24))} days
+                    <Calendar size={14} />
+                    <span>{Math.ceil((new Date(cycle.end_date) - new Date(cycle.start_date)) / (1000 * 60 * 60 * 24))} days</span>
                   </div>
                 )}
                 <div className={`flow-badge flow-${cycle.flow_intensity}`}>
+                  <Droplet size={14} />
                   {cycle.flow_intensity} flow
                 </div>
+                {cycle.flow_type && (
+                  <div className="flow-type-badge">
+                    {cycle.flow_type.replace('_', ' ')}
+                  </div>
+                )}
               </div>
             ))}
           </div>

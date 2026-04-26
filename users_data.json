@@ -1,0 +1,18 @@
+{
+  "test@example.com": {
+    "email": "test@example.com",
+    "password": "scrypt:32768:8:1$xjsiwKpeggDTvcP8$c7a5242a54662875bebd710696021a0bc8ed5dc550dd6ae53d9616972c150b32150c610acbd285073f45a4366920ca62f5e2f8b92cc065971a5062d5c3460e90",
+    "name": "Test User",
+    "age": 25,
+    "cycles": [],
+    "symptoms": [],
+    "moods": [],
+    "medications": [],
+    "exercises": [],
+    "sleep": [],
+    "water": [],
+    "nutrition": [],
+    "supplements": [],
+    "weight": []
+  }
+}

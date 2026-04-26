@@ -1,13 +1,17 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime, timedelta
-from routes.auth import users_db
+from routes.auth import users_db, save_users_db, load_users_db
 
 cycles_bp = Blueprint('cycles', __name__)
 
 @cycles_bp.route('/', methods=['POST'])
 @jwt_required()
 def add_cycle():
+    # Reload database to get latest data
+    global users_db
+    users_db = load_users_db()
+    
     current_user_email = get_jwt_identity()
     user = users_db.get(current_user_email)
     
@@ -32,6 +36,9 @@ def add_cycle():
     
     user['cycles'].append(cycle)
     
+    # Save to file
+    save_users_db(users_db)
+    
     return jsonify({
         'message': 'Cycle added successfully',
         'cycle': cycle
@@ -40,6 +47,10 @@ def add_cycle():
 @cycles_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_cycles():
+    # Reload database to get latest data
+    global users_db
+    users_db = load_users_db()
+    
     current_user_email = get_jwt_identity()
     user = users_db.get(current_user_email)
     
@@ -54,6 +65,10 @@ def get_cycles():
 @cycles_bp.route('/stats', methods=['GET'])
 @jwt_required()
 def get_cycle_stats():
+    # Reload database to get latest data
+    global users_db
+    users_db = load_users_db()
+    
     current_user_email = get_jwt_identity()
     user = users_db.get(current_user_email)
     
@@ -86,6 +101,10 @@ def get_cycle_stats():
 @cycles_bp.route('/predict-next', methods=['GET'])
 @jwt_required()
 def predict_next_cycle():
+    # Reload database to get latest data
+    global users_db
+    users_db = load_users_db()
+    
     current_user_email = get_jwt_identity()
     user = users_db.get(current_user_email)
     

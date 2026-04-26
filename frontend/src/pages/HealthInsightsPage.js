@@ -71,7 +71,6 @@ function HealthInsightsPage() {
             </div>
           </div>
           <div className="header-actions">
-            <LanguageSelector />
             <ThemeToggle />
             <div className="privacy-badge">
               <Shield size={16} />
@@ -79,6 +78,7 @@ function HealthInsightsPage() {
             </div>
             <button onClick={handleLogout} className="btn-secondary">Logout</button>
           </div>
+          <LanguageSelector />
         </div>
       </header>
 

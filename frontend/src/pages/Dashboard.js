@@ -56,9 +56,10 @@ function Dashboard() {
   }
 
   return (
-    <div className="dashboard">
-      <Navigation />
+    <>
       <AnimatedBackground />
+      <Navigation />
+      <div className="dashboard">
       
       <header className="dashboard-header">
         <div className="header-content">
@@ -70,13 +71,18 @@ function Dashboard() {
             </div>
           </div>
           <div className="header-actions">
-            <LanguageSelector />
             <ThemeToggle />
             <div className="privacy-badge">
               <Shield size={16} />
               <span>Private & Secure</span>
             </div>
             <button onClick={handleLogout} className="btn-secondary">Logout</button>
+            <div className="mobile-language-selector">
+              <LanguageSelector />
+            </div>
+          </div>
+          <div className="desktop-language-selector">
+            <LanguageSelector />
           </div>
         </div>
       </header>
@@ -105,7 +111,7 @@ function Dashboard() {
       )}
 
       <div className="dashboard-grid">
-        <div className="card" onClick={() => navigate('/cycles')}>
+        <div className="card" onClick={() => navigate('/trackers')}>
           <div className="card-icon">
             <Calendar size={32} />
           </div>
@@ -123,12 +129,12 @@ function Dashboard() {
           )}
         </div>
 
-        <div className="card" onClick={() => navigate('/symptoms')}>
+        <div className="card" onClick={() => navigate('/health-data')}>
           <div className="card-icon">
             <Activity size={32} />
           </div>
-          <h3>Symptom Logger</h3>
-          <p className="stat-label">Track daily symptoms and patterns</p>
+          <h3>Health Data Hub</h3>
+          <p className="stat-label">Symptoms, Calendar, Insights & Journal - All in One</p>
         </div>
 
         <div className="card" onClick={() => navigate('/pcod-assessment')}>
@@ -175,68 +181,7 @@ function Dashboard() {
       {/* Health Score */}
       <HealthScore />
 
-      {/* Main Feature Cards */}
-      <div className="dashboard-grid">
-        <div className="card" onClick={() => navigate('/cycles')}>
-          <div className="card-icon">
-            <Calendar size={32} />
-          </div>
-          <h3>Cycle Tracking</h3>
-          {stats && stats.total_cycles > 0 ? (
-            <>
-              <p className="stat-value">{stats.average_cycle_length} days</p>
-              <p className="stat-label">Average Cycle Length</p>
-              {stats.is_irregular && (
-                <span className="badge badge-warning">Irregular</span>
-              )}
-            </>
-          ) : (
-            <p className="stat-label">Start tracking your cycles</p>
-          )}
-        </div>
 
-        <div className="card" onClick={() => navigate('/symptoms')}>
-          <div className="card-icon">
-            <Activity size={32} />
-          </div>
-          <h3>Symptom Logger</h3>
-          <p className="stat-label">Track daily symptoms and patterns</p>
-        </div>
-
-        <div className="card" onClick={() => navigate('/pcod-assessment')}>
-          <div className="card-icon">
-            <AlertCircle size={32} />
-          </div>
-          <h3>PCOD Risk Assessment</h3>
-          {riskAssessment ? (
-            <>
-              <p className={`stat-value risk-${riskAssessment.risk_level.toLowerCase()}`}>
-                {riskAssessment.risk_level} Risk
-              </p>
-              <p className="stat-label">{Math.round(riskAssessment.probability * 100)}% probability</p>
-            </>
-          ) : (
-            <p className="stat-label">Get your risk assessment</p>
-          )}
-        </div>
-
-        <div className="card">
-          <div className="card-icon">
-            <TrendingUp size={32} />
-          </div>
-          <h3>Next Period Prediction</h3>
-          {nextPeriod && nextPeriod.predicted_start_date ? (
-            <>
-              <p className="stat-value">
-                {new Date(nextPeriod.predicted_start_date).toLocaleDateString()}
-              </p>
-              <p className="stat-label">Confidence: {nextPeriod.confidence}</p>
-            </>
-          ) : (
-            <p className="stat-label">Need more data for prediction</p>
-          )}
-        </div>
-      </div>
 
       {/* Navigation Cards for New Modules */}
       <div className="module-navigation">
@@ -273,6 +218,14 @@ function Dashboard() {
             <h3>Advanced Features</h3>
             <p className="stat-label">Voice logger, pain map, horoscope & more</p>
           </div>
+
+          <div className="card module-card" onClick={() => navigate('/trackers')}>
+            <div className="card-icon">
+              <span style={{fontSize: '32px'}}>📊</span>
+            </div>
+            <h3>Health Trackers</h3>
+            <p className="stat-label">Medication, exercise, sleep, nutrition & more</p>
+          </div>
         </div>
       </div>
 
@@ -295,6 +248,7 @@ function Dashboard() {
         </div>
       </footer>
     </div>
+    </>
   );
 }
 

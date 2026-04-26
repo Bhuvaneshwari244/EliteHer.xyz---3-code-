@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AlertCircle, TrendingUp, Calendar } from 'lucide-react';
 
 function PCODSymptomTracker() {
@@ -16,6 +16,19 @@ function PCODSymptomTracker() {
   });
 
   const [trackingHistory, setTrackingHistory] = useState([]);
+
+  // Load saved data from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedData = localStorage.getItem('pcodSymptoms');
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        setTrackingHistory(parsedData);
+      }
+    } catch (error) {
+      console.error('Error loading PCOD symptoms:', error);
+    }
+  }, []);
 
   const symptomLabels = {
     irregularPeriods: 'Irregular Periods',
@@ -47,13 +60,32 @@ function PCODSymptomTracker() {
   };
 
   const saveTracking = () => {
+    // Check if any symptoms are tracked
+    const hasData = Object.values(symptoms).some(val => val > 0);
+    
+    if (!hasData) {
+      alert('⚠️ Please rate at least one symptom before saving!');
+      return;
+    }
+
     const entry = {
+      id: Date.now(),
       date: new Date().toISOString().split('T')[0],
       symptoms: { ...symptoms },
       score: calculatePCODScore()
     };
-    setTrackingHistory([entry, ...trackingHistory]);
-    alert('PCOD symptoms tracked successfully!');
+    
+    const updatedHistory = [entry, ...trackingHistory];
+    setTrackingHistory(updatedHistory);
+    
+    // Save to localStorage
+    try {
+      localStorage.setItem('pcodSymptoms', JSON.stringify(updatedHistory));
+      alert('✅ PCOD symptoms tracked successfully!\n\nYour data has been saved.');
+    } catch (error) {
+      console.error('Error saving PCOD symptoms:', error);
+      alert('❌ Error saving data. Please try again.');
+    }
   };
 
   const score = calculatePCODScore();
@@ -85,7 +117,10 @@ function PCODSymptomTracker() {
       <div className="symptoms-grid">
         {Object.entries(symptomLabels).map(([key, label]) => (
           <div key={key} className="symptom-item">
-            <label>{label}</label>
+            <div className="symptom-header">
+              <label>{label}</label>
+              <span className="slider-value">{symptoms[key]}/10</span>
+            </div>
             <div className="slider-container">
               <input 
                 type="range"
@@ -97,7 +132,6 @@ function PCODSymptomTracker() {
                   background: `linear-gradient(to right, #ff6b6b ${symptoms[key] * 10}%, #ddd ${symptoms[key] * 10}%)`
                 }}
               />
-              <span className="slider-value">{symptoms[key]}/10</span>
             </div>
           </div>
         ))}
@@ -221,25 +255,86 @@ function PCODSymptomTracker() {
 
         .symptoms-grid {
           display: grid;
-          gap: 20px;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 16px;
           margin-bottom: 24px;
         }
 
+        @media (max-width: 1024px) {
+          .symptoms-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+
+        @media (max-width: 768px) {
+          .symptoms-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        @media (max-width: 480px) {
+          .symptoms-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .symptom-item {
+          margin-bottom: 0;
+          padding: 16px;
+          background: rgba(255, 107, 107, 0.05);
+          border: 1px solid rgba(255, 107, 107, 0.1);
+          border-radius: 12px;
+          transition: all 0.3s ease;
+        }
+
+        .symptom-item:hover {
+          background: rgba(255, 107, 107, 0.08);
+          border-color: rgba(255, 107, 107, 0.2);
+          transform: none;
+        }
+
+        .symptom-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 12px;
+          gap: 8px;
+          min-height: 40px;
+        }
+
         .symptom-item label {
-          display: block;
-          margin-bottom: 8px;
           font-weight: 600;
           color: #333;
+          margin: 0;
+          flex: 1;
+          font-size: 13px;
+          line-height: 1.3;
+          padding-right: 4px;
+          word-break: break-word;
+          max-width: calc(100% - 60px);
+        }
+
+        .slider-value {
+          min-width: 48px;
+          max-width: 48px;
+          text-align: center;
+          font-weight: 700;
+          font-size: 14px;
+          color: #ff6b6b;
+          background: white;
+          padding: 4px 6px;
+          border-radius: 6px;
+          border: 2px solid #ff6b6b;
+          flex-shrink: 0;
+          height: fit-content;
         }
 
         .slider-container {
-          display: flex;
-          align-items: center;
-          gap: 12px;
+          width: 100%;
         }
 
         .slider-container input[type="range"] {
-          flex: 1;
+          width: 100%;
           height: 8px;
           border-radius: 4px;
           outline: none;
@@ -253,13 +348,17 @@ function PCODSymptomTracker() {
           border-radius: 50%;
           background: #ff6b6b;
           cursor: pointer;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .slider-value {
-          min-width: 45px;
-          text-align: right;
-          font-weight: 600;
-          color: #ff6b6b;
+        .slider-container input[type="range"]::-moz-range-thumb {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #ff6b6b;
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .save-btn {

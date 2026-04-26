@@ -1,7 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { ArrowLeft, Sparkles, Shield } from 'lucide-react';
 import Navigation from '../components/Navigation';
+import { AnimatedBackground } from '../components/AnimatedBackground';
+import ThemeToggle from '../components/ThemeToggle';
+import LanguageSelector from '../components/LanguageSelector';
 import { useLanguage } from '../context/LanguageContext';
 import VoiceSymptomLogger from '../components/VoiceSymptomLogger';
 import PainHeatMap from '../components/PainHeatMap';
@@ -19,36 +22,131 @@ function AdvancedFeatures() {
   const navigate = useNavigate();
   const { t } = useLanguage();
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
   const handleSymptomLogged = (symptomData) => {
     console.log('Voice symptom logged:', symptomData);
-    // You can save to backend here
-    alert('Symptoms logged successfully!');
+    
+    // Save to localStorage in the same format as SymptomLogger
+    try {
+      const existingSymptoms = JSON.parse(localStorage.getItem('symptoms') || '[]');
+      
+      // Convert voice symptom format to match SymptomLogger format
+      const symptomObject = {};
+      symptomData.symptoms.forEach(symptom => {
+        // Map symptom names to match SymptomLogger keys
+        const symptomKey = symptom.replace(/([A-Z])/g, '_$1').toLowerCase();
+        symptomObject[symptomKey] = 5; // Default intensity for voice-logged symptoms
+      });
+      
+      const newSymptom = {
+        id: Date.now(),
+        date: symptomData.date,
+        mood: symptomData.mood,
+        energy_level: 'normal',
+        pain_level: symptomData.painLevel,
+        notes: `🎤 Voice: ${symptomData.notes}`,
+        symptoms: symptomObject,
+        created_at: new Date().toISOString(),
+        loggedVia: 'voice'
+      };
+      
+      existingSymptoms.push(newSymptom);
+      localStorage.setItem('symptoms', JSON.stringify(existingSymptoms));
+      
+      console.log('✅ Symptom saved to localStorage:', newSymptom);
+      
+      // Show success message with what was detected
+      const detectedItems = [];
+      if (symptomData.symptoms.length > 0) {
+        detectedItems.push(`Symptoms: ${symptomData.symptoms.join(', ')}`);
+      }
+      if (symptomData.mood !== 'neutral') {
+        detectedItems.push(`Mood: ${symptomData.mood}`);
+      }
+      if (symptomData.painLevel > 0) {
+        detectedItems.push(`Pain level: ${symptomData.painLevel}/10`);
+      }
+      
+      if (detectedItems.length > 0) {
+        alert(`✅ Symptoms logged successfully!\n\nDetected:\n• ${detectedItems.join('\n• ')}\n\nView in Symptom Logger page`);
+      } else {
+        alert('✅ Voice note saved!\n\nNo specific symptoms detected, but your note was saved.\n\nView in Symptom Logger page');
+      }
+      
+      // Also try to save to backend if available
+      // symptomsAPI.logSymptom(newSymptom).catch(err => console.log('Backend save failed:', err));
+      
+    } catch (error) {
+      console.error('Error saving symptom:', error);
+      alert('❌ Error saving symptom. Please try again.');
+    }
   };
 
   const handlePainLogged = (painData) => {
     console.log('Pain map logged:', painData);
-    // You can save to backend here
+    
+    // Save to localStorage
+    try {
+      const existingPainLogs = JSON.parse(localStorage.getItem('painHeatMapData') || '[]');
+      const newPainLog = {
+        id: Date.now(),
+        date: new Date().toISOString().split('T')[0],
+        timestamp: new Date().toISOString(),
+        ...painData
+      };
+      
+      existingPainLogs.push(newPainLog);
+      localStorage.setItem('painHeatMapData', JSON.stringify(existingPainLogs));
+      
+      console.log('✅ Pain data saved to localStorage:', newPainLog);
+      alert('✅ Pain data logged successfully!\n\nView your pain history in the Pain Heat Map section.');
+      
+    } catch (error) {
+      console.error('Error saving pain data:', error);
+      alert('❌ Error saving pain data. Please try again.');
+    }
   };
 
   return (
-    <div className="advanced-features-page">
+    <div className="dashboard">
       <Navigation />
+      <AnimatedBackground />
       
-      <div className="page-header">
-        <button className="back-button" onClick={() => navigate('/dashboard')}>
-          <ArrowLeft size={20} />
-          {t('common.back')}
-        </button>
+      <button onClick={() => navigate(-1)} className="back-button" title="Go back">
+        <ArrowLeft size={20} />
+      </button>
+      
+      <header className="dashboard-header">
         <div className="header-content">
-          <Sparkles size={32} className="header-icon" />
-          <div>
-            <h1>{t('advanced.title')}</h1>
-            <p>{t('advanced.subtitle')}</p>
+          <div className="header-logo">
+            <span className="logo-icon">✨</span>
+            <div>
+              <h1 className="logo-title">Advanced Features</h1>
+              <p className="logo-subtitle">Cutting-edge tools for comprehensive health tracking</p>
+            </div>
+          </div>
+          <div className="header-actions">
+            <ThemeToggle />
+            <div className="privacy-badge">
+              <Shield size={16} />
+              <span>Private & Secure</span>
+            </div>
+            <button onClick={handleLogout} className="btn-secondary">Logout</button>
+            <div className="mobile-language-selector">
+              <LanguageSelector />
+            </div>
+          </div>
+          <div className="desktop-language-selector">
+            <LanguageSelector />
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="features-container">
+      <div className="page-container">
         {/* Voice Symptom Logger */}
         <section className="feature-section">
           <VoiceSymptomLogger onSymptomLogged={handleSymptomLogged} />
@@ -105,113 +203,12 @@ function AdvancedFeatures() {
         </section>
       </div>
 
-      <footer className="page-footer">
+      <footer className="dashboard-footer">
         <div className="footer-content">
           <span className="footer-logo">🌸</span>
-          <p>{t('advanced.poweredBy')}</p>
+          <p>For informational purposes only. Always consult a healthcare professional for medical advice.</p>
         </div>
       </footer>
-
-      <style jsx>{`
-        .advanced-features-page {
-          min-height: 100vh;
-          background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
-          padding-bottom: 40px;
-        }
-
-        .page-header {
-          background: white;
-          padding: 24px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-          margin-bottom: 32px;
-        }
-
-        .back-button {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 8px 16px;
-          background: transparent;
-          border: 2px solid #ff6b6b;
-          border-radius: 8px;
-          color: #ff6b6b;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          margin-bottom: 16px;
-        }
-
-        .back-button:hover {
-          background: #ff6b6b;
-          color: white;
-        }
-
-        .header-content {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .header-icon {
-          color: #ff6b6b;
-        }
-
-        .header-content h1 {
-          margin: 0;
-          color: #333;
-          font-size: 32px;
-        }
-
-        .header-content p {
-          margin: 4px 0 0 0;
-          color: #666;
-          font-size: 16px;
-        }
-
-        .features-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 0 24px;
-        }
-
-        .feature-section {
-          margin-bottom: 32px;
-        }
-
-        .page-footer {
-          text-align: center;
-          padding: 32px 24px;
-          margin-top: 40px;
-        }
-
-        .footer-content {
-          max-width: 600px;
-          margin: 0 auto;
-        }
-
-        .footer-logo {
-          font-size: 48px;
-          display: block;
-          margin-bottom: 12px;
-        }
-
-        .footer-content p {
-          color: #666;
-          margin: 0;
-        }
-
-        @media (max-width: 768px) {
-          .header-content {
-            flex-direction: column;
-            align-items: flex-start;
-          }
-
-          .header-content h1 {
-            font-size: 24px;
-          }
-        }
-      `}</style>
     </div>
   );
 }

@@ -1,0 +1,35 @@
+{
+  "bhuvaneshwarilsrma010@gmail.com": {
+    "email": "bhuvaneshwarilsrma010@gmail.com",
+    "password": "scrypt:32768:8:1$KM4PVKytEMn4FLTP$ea944042ca4508d40ce8e1e0e98f4559476c832c088016c80a7120d4906ddb41b8c092d99c7b53dba37d4b33c79efa3412ddf100d4a612e7a49fc652b2815ba2",
+    "name": "Bhuvaneshwari Rebba",
+    "age": 20,
+    "created_at": "2026-04-25T12:28:31.890891",
+    "cycles": [],
+    "symptoms": []
+  },
+  "bhuvaneshwaritsms010@gmail.com": {
+    "email": "bhuvaneshwaritsms010@gmail.com",
+    "password": "scrypt:32768:8:1$GlbyfVvYUSEJHppl$37b76af007a35fec1cb01643dc1925f62c515689a9a4ed987cac35e51fdae10af7edff18695d6388f21080d6041d49f6aad63089b89f4e549d8051efc695c006",
+    "name": "Bhuvaneshwari Rebba",
+    "age": "20",
+    "created_at": "2026-04-25T12:56:33.040797",
+    "cycles": [],
+    "symptoms": [
+      {
+        "id": 1,
+        "date": "2026-04-25",
+        "mood": "neutral",
+        "pain_level": 8,
+        "symptoms": [],
+        "cramps": true,
+        "headache": true,
+        "fatigue": 2,
+        "acne": false,
+        "bloating": false,
+        "notes": "",
+        "created_at": "2026-04-25T12:57:10.719532"
+      }
+    ]
+  }
+}

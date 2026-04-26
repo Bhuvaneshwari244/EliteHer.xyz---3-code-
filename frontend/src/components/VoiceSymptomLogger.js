@@ -26,7 +26,10 @@ function VoiceSymptomLogger({ onSymptomLogged }) {
     recognitionInstance.onresult = (event) => {
       const speechResult = event.results[0][0].transcript;
       setTranscript(speechResult);
-      parseSymptoms(speechResult);
+      // Auto-save after transcription
+      setTimeout(() => {
+        parseSymptoms(speechResult);
+      }, 500);
     };
 
     recognitionInstance.onerror = (event) => {

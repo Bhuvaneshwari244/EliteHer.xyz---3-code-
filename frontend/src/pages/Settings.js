@@ -20,7 +20,12 @@ function Settings() {
     privacy: {
       dataSharing: false,
       analytics: true,
-      biometricLock: false
+      biometricLock: false,
+      pinLock: false,
+      pinCode: '',
+      privateMode: false,
+      autoLock: true,
+      autoLockTime: 5
     },
     preferences: {
       language: 'en',
@@ -29,6 +34,10 @@ function Settings() {
       periodLength: 5
     }
   });
+
+  const [showPinSetup, setShowPinSetup] = useState(false);
+  const [newPin, setNewPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
 
   useEffect(() => {
     loadSettings();
@@ -114,6 +123,44 @@ function Settings() {
     }
   };
 
+  const handleSetupPin = () => {
+    if (newPin.length !== 4 || confirmPin.length !== 4) {
+      alert('PIN must be 4 digits');
+      return;
+    }
+    if (newPin !== confirmPin) {
+      alert('PINs do not match');
+      return;
+    }
+    const updated = {
+      ...settings,
+      privacy: {
+        ...settings.privacy,
+        pinLock: true,
+        pinCode: newPin
+      }
+    };
+    saveSettings(updated);
+    setShowPinSetup(false);
+    setNewPin('');
+    setConfirmPin('');
+    alert('PIN set successfully!');
+  };
+
+  const handleRemovePin = () => {
+    if (window.confirm('Remove PIN protection?')) {
+      const updated = {
+        ...settings,
+        privacy: {
+          ...settings.privacy,
+          pinLock: false,
+          pinCode: ''
+        }
+      };
+      saveSettings(updated);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
@@ -138,7 +185,6 @@ function Settings() {
             </div>
           </div>
           <div className="header-actions">
-            <LanguageSelector />
             <ThemeToggle />
             <div className="privacy-badge">
               <Shield size={16} />
@@ -146,6 +192,7 @@ function Settings() {
             </div>
             <button onClick={handleLogout} className="btn-secondary">Logout</button>
           </div>
+          <LanguageSelector />
         </div>
       </header>
 
@@ -243,6 +290,136 @@ function Settings() {
           <div className="settings-list">
             <div className="setting-item">
               <div className="setting-info">
+                <h4>PIN Lock</h4>
+                <p>Protect your app with a 4-digit PIN</p>
+              </div>
+              <div className="setting-actions">
+                {settings.privacy.pinLock ? (
+                  <button onClick={handleRemovePin} className="btn-secondary">
+                    Remove PIN
+                  </button>
+                ) : (
+                  <button onClick={() => setShowPinSetup(!showPinSetup)} className="btn-primary">
+                    Set PIN
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {showPinSetup && !settings.privacy.pinLock && (
+              <div className="pin-setup-card">
+                <h4>Set Up PIN</h4>
+                <div className="pin-inputs">
+                  <div className="form-group">
+                    <label>Enter 4-digit PIN</label>
+                    <input
+                      type="password"
+                      maxLength="4"
+                      value={newPin}
+                      onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ''))}
+                      placeholder="••••"
+                      className="pin-input"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Confirm PIN</label>
+                    <input
+                      type="password"
+                      maxLength="4"
+                      value={confirmPin}
+                      onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, ''))}
+                      placeholder="••••"
+                      className="pin-input"
+                    />
+                  </div>
+                </div>
+                <div className="pin-actions">
+                  <button onClick={() => setShowPinSetup(false)} className="btn-secondary">
+                    Cancel
+                  </button>
+                  <button onClick={handleSetupPin} className="btn-primary">
+                    Save PIN
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="setting-item">
+              <div className="setting-info">
+                <h4>Biometric Lock</h4>
+                <p>Use fingerprint/face ID to unlock</p>
+              </div>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={settings.privacy.biometricLock}
+                  onChange={() => handlePrivacyChange('biometricLock')}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div className="setting-item">
+              <div className="setting-info">
+                <h4>Private Mode</h4>
+                <p>Hide sensitive data by default</p>
+              </div>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={settings.privacy.privateMode}
+                  onChange={() => handlePrivacyChange('privateMode')}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div className="setting-item">
+              <div className="setting-info">
+                <h4>Auto Lock</h4>
+                <p>Automatically lock app when inactive</p>
+              </div>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={settings.privacy.autoLock}
+                  onChange={() => handlePrivacyChange('autoLock')}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
+
+            {settings.privacy.autoLock && (
+              <div className="setting-item">
+                <div className="setting-info">
+                  <h4>Auto Lock Time</h4>
+                  <p>Lock after minutes of inactivity</p>
+                </div>
+                <select
+                  value={settings.privacy.autoLockTime}
+                  onChange={(e) => {
+                    const updated = {
+                      ...settings,
+                      privacy: {
+                        ...settings.privacy,
+                        autoLockTime: parseInt(e.target.value)
+                      }
+                    };
+                    saveSettings(updated);
+                  }}
+                  className="setting-select"
+                >
+                  <option value="1">1 minute</option>
+                  <option value="5">5 minutes</option>
+                  <option value="10">10 minutes</option>
+                  <option value="15">15 minutes</option>
+                  <option value="30">30 minutes</option>
+                </select>
+              </div>
+            )}
+
+            <div className="setting-item">
+              <div className="setting-info">
                 <h4>Data Sharing</h4>
                 <p>Share anonymous data for research</p>
               </div>
@@ -270,20 +447,13 @@ function Settings() {
                 <span className="toggle-slider"></span>
               </label>
             </div>
+          </div>
 
-            <div className="setting-item">
-              <div className="setting-info">
-                <h4>Biometric Lock</h4>
-                <p>Use fingerprint/face ID to unlock</p>
-              </div>
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={settings.privacy.biometricLock}
-                  onChange={() => handlePrivacyChange('biometricLock')}
-                />
-                <span className="toggle-slider"></span>
-              </label>
+          <div className="security-info">
+            <Shield size={20} />
+            <div>
+              <h4>Your Data is Secure</h4>
+              <p>All data is encrypted and stored locally on your device. We never upload your personal health information to any server.</p>
             </div>
           </div>
         </div>

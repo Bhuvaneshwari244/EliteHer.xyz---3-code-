@@ -14,6 +14,8 @@ function CalendarView() {
   const [symptoms, setSymptoms] = useState([]);
   const [selectedDay, setSelectedDay] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showQuickEntry, setShowQuickEntry] = useState(false);
+  const [entryType, setEntryType] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -31,6 +33,42 @@ function CalendarView() {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleQuickEntry = (type) => {
+    setEntryType(type);
+    setShowQuickEntry(true);
+  };
+
+  const saveQuickEntry = async (data) => {
+    try {
+      const dateStr = selectedDay.toISOString().split('T')[0];
+      
+      if (entryType === 'period') {
+        // Create or update cycle
+        await cyclesAPI.createCycle({
+          start_date: dateStr,
+          flow_intensity: data.flow || 'medium'
+        });
+      } else {
+        // Create or update symptom entry
+        await symptomsAPI.createSymptom({
+          date: dateStr,
+          mood: data.mood || 'neutral',
+          pain_level: data.pain_level || 0,
+          symptoms: data.symptoms || [],
+          notes: data.notes || ''
+        });
+      }
+      
+      // Refresh data
+      await fetchData();
+      setShowQuickEntry(false);
+      setEntryType(null);
+    } catch (error) {
+      console.error('Error saving entry:', error);
+      alert('Error saving data. Please try again.');
     }
   };
 
@@ -141,7 +179,6 @@ function CalendarView() {
             </div>
           </div>
           <div className="header-actions">
-            <LanguageSelector />
             <ThemeToggle />
             <div className="privacy-badge">
               <Shield size={16} />
@@ -149,6 +186,7 @@ function CalendarView() {
             </div>
             <button onClick={handleLogout} className="btn-secondary">Logout</button>
           </div>
+          <LanguageSelector />
         </div>
       </header>
 
@@ -223,9 +261,38 @@ function CalendarView() {
           <div className="day-details">
             <h3>{selectedDay.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
             
+            {/* Quick Entry Buttons */}
+            <div className="quick-entry-buttons">
+              <button 
+                onClick={() => handleQuickEntry('period')} 
+                className="quick-entry-btn period-btn"
+              >
+                📅 Mark Period Day
+              </button>
+              <button 
+                onClick={() => handleQuickEntry('symptoms')} 
+                className="quick-entry-btn symptoms-btn"
+              >
+                🩺 Log Symptoms
+              </button>
+              <button 
+                onClick={() => handleQuickEntry('mood')} 
+                className="quick-entry-btn mood-btn"
+              >
+                😊 Log Mood
+              </button>
+              <button 
+                onClick={() => handleQuickEntry('notes')} 
+                className="quick-entry-btn notes-btn"
+              >
+                📝 Add Notes
+              </button>
+            </div>
+
+            {/* Existing Data Display */}
             {getDaySymptoms(selectedDay).length > 0 ? (
               <div className="symptoms-list">
-                <h4>Symptoms Logged:</h4>
+                <h4>Logged Data:</h4>
                 {getDaySymptoms(selectedDay).map((symptom, idx) => (
                   <div key={idx} className="symptom-item">
                     <p><strong>Mood:</strong> {symptom.mood}</p>
@@ -238,15 +305,18 @@ function CalendarView() {
                 ))}
               </div>
             ) : (
-              <p className="no-data">No symptoms logged for this day</p>
+              <div className="no-data">
+                <p>No data logged for this day</p>
+                <p className="help-text">Click the buttons above to quickly add data</p>
+              </div>
             )}
             
             <div className="day-actions">
               <button 
-                onClick={() => navigate('/symptoms')} 
+                onClick={() => navigate('/trackers')} 
                 className="btn-primary"
               >
-                Log Symptoms
+                Open All Trackers
               </button>
               <button 
                 onClick={() => setSelectedDay(null)} 
@@ -256,6 +326,19 @@ function CalendarView() {
               </button>
             </div>
           </div>
+        )}
+
+        {/* Quick Entry Modal */}
+        {showQuickEntry && (
+          <QuickEntryModal 
+            type={entryType}
+            date={selectedDay}
+            onSave={saveQuickEntry}
+            onClose={() => {
+              setShowQuickEntry(false);
+              setEntryType(null);
+            }}
+          />
         )}
       </div>
 
@@ -271,6 +354,148 @@ function CalendarView() {
           </p>
         </div>
       </footer>
+    </div>
+  );
+}
+
+// Quick Entry Modal Component
+function QuickEntryModal({ type, date, onSave, onClose }) {
+  const [formData, setFormData] = useState({
+    mood: 'neutral',
+    pain_level: 0,
+    flow: 'medium',
+    symptoms: [],
+    notes: ''
+  });
+
+  const moodOptions = [
+    { value: 'happy', emoji: '😊', label: 'Happy' },
+    { value: 'neutral', emoji: '😐', label: 'Neutral' },
+    { value: 'sad', emoji: '😢', label: 'Sad' },
+    { value: 'anxious', emoji: '😰', label: 'Anxious' },
+    { value: 'irritated', emoji: '😤', label: 'Irritated' }
+  ];
+
+  const symptomOptions = [
+    'Cramps', 'Headache', 'Bloating', 'Fatigue', 'Nausea', 
+    'Breast Tenderness', 'Acne', 'Food Cravings', 'Mood Swings'
+  ];
+
+  const handleSymptomToggle = (symptom) => {
+    setFormData(prev => ({
+      ...prev,
+      symptoms: prev.symptoms.includes(symptom)
+        ? prev.symptoms.filter(s => s !== symptom)
+        : [...prev.symptoms, symptom]
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  return (
+    <div className="quick-entry-modal-overlay" onClick={onClose}>
+      <div className="quick-entry-modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>
+            {type === 'period' && '📅 Mark Period Day'}
+            {type === 'symptoms' && '🩺 Log Symptoms'}
+            {type === 'mood' && '😊 Log Mood'}
+            {type === 'notes' && '📝 Add Notes'}
+          </h3>
+          <button onClick={onClose} className="close-btn">×</button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="modal-form">
+          <p className="modal-date">
+            {date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+          </p>
+
+          {type === 'period' && (
+            <div className="form-group">
+              <label>Flow Intensity:</label>
+              <div className="flow-options">
+                {['light', 'medium', 'heavy'].map(flow => (
+                  <button
+                    key={flow}
+                    type="button"
+                    className={`flow-btn ${formData.flow === flow ? 'active' : ''}`}
+                    onClick={() => setFormData(prev => ({ ...prev, flow }))}
+                  >
+                    {flow.charAt(0).toUpperCase() + flow.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {(type === 'symptoms' || type === 'mood') && (
+            <>
+              <div className="form-group">
+                <label>Mood:</label>
+                <div className="mood-options">
+                  {moodOptions.map(mood => (
+                    <button
+                      key={mood.value}
+                      type="button"
+                      className={`mood-btn ${formData.mood === mood.value ? 'active' : ''}`}
+                      onClick={() => setFormData(prev => ({ ...prev, mood: mood.value }))}
+                    >
+                      <span className="mood-emoji">{mood.emoji}</span>
+                      <span>{mood.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Pain Level: {formData.pain_level}/10</label>
+                <input
+                  type="range"
+                  min="0"
+                  max="10"
+                  value={formData.pain_level}
+                  onChange={(e) => setFormData(prev => ({ ...prev, pain_level: parseInt(e.target.value) }))}
+                  className="pain-slider"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Symptoms:</label>
+                <div className="symptoms-grid">
+                  {symptomOptions.map(symptom => (
+                    <button
+                      key={symptom}
+                      type="button"
+                      className={`symptom-btn ${formData.symptoms.includes(symptom) ? 'active' : ''}`}
+                      onClick={() => handleSymptomToggle(symptom)}
+                    >
+                      {symptom}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          <div className="form-group">
+            <label>Notes:</label>
+            <textarea
+              value={formData.notes}
+              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              placeholder="Add any additional notes..."
+              rows="3"
+            />
+          </div>
+
+          <div className="modal-actions">
+            <button type="submit" className="btn-primary">Save Entry</button>
+            <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
