@@ -47,3 +47,9 @@ backend/models/saved/*.pkl
 
 # Build
 frontend/build/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
