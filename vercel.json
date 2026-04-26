@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/*.py",
+      "src": "api/index.py",
       "use": "@vercel/python"
     },
     {
@@ -16,14 +16,14 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/backend/app.py"
+      "dest": "/api/index.py"
     },
     {
       "src": "/static/(.*)",
       "dest": "/frontend/build/static/$1"
     },
     {
-      "src": "/(.*\\.(js|css|json|ico|svg|png|jpg|jpeg|gif|woff|woff2|ttf|eot))",
+      "src": "/(.*\\.(js|css|json|ico|svg|png|jpg|jpeg|gif))",
       "dest": "/frontend/build/$1"
     },
     {
