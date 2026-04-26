@@ -24,11 +24,22 @@ function DataVisualization({ cycles, symptoms }) {
       const moods = {};
       
       symptoms.forEach(s => {
+        // Handle different symptom data structures
         if (s.symptoms && Array.isArray(s.symptoms)) {
           s.symptoms.forEach(symptom => {
-            freq[symptom] = (freq[symptom] || 0) + 1;
+            if (typeof symptom === 'string') {
+              freq[symptom] = (freq[symptom] || 0) + 1;
+            }
+          });
+        } else {
+          // Extract from individual properties
+          Object.keys(s).forEach(key => {
+            if (s[key] && typeof s[key] === 'object' && s[key].active) {
+              freq[key] = (freq[key] || 0) + 1;
+            }
           });
         }
+        
         if (s.mood) {
           moods[s.mood] = (moods[s.mood] || 0) + 1;
         }

@@ -1,7 +1,250 @@
 // Multi-language translations for Aura app
 export const translations = {
+  te: {
+    // Telugu
+    common: {
+      appName: 'ఆరా',
+      tagline: 'మీ వ్యక్తిగత పీరియడ్ ట్రాకింగ్ సహచరుడు',
+      logout: 'లాగ్అవుట్',
+      back: 'వెనుకకు',
+      save: 'సేవ్ చేయండి',
+      cancel: 'రద్దు చేయండి',
+      delete: 'తొలగించండి',
+      edit: 'సవరించండి',
+      add: 'జోడించండి',
+      submit: 'సమర్పించండి',
+      loading: 'లోడ్ అవుతోంది...',
+      privateSecure: 'ప్రైవేట్ & సురక్షితం',
+      yes: 'అవును',
+      no: 'కాదు'
+    },
+    
+    nav: {
+      dashboard: 'డాష్‌బోర్డ్',
+      calendar: 'క్యాలెండర్',
+      cycles: 'సైకిల్ ట్రాకర్',
+      symptoms: 'లక్షణాల రికార్డు',
+      journal: 'జర్నల్',
+      doctors: 'డాక్టర్ సంప్రదింపు',
+      pcod: 'పీసీఓడీ అంచనా',
+      insights: 'ఆరోగ్య అంతర్దృష్టులు',
+      wellness: 'వెల్నెస్ హబ్',
+      advanced: 'అధునాతన',
+      settings: 'సెట్టింగ్‌లు',
+      healthDataHub: 'హెల్త్ డేటా హబ్',
+      healthTrackers: 'హెల్త్ ట్రాకర్స్',
+      pregnancyMode: 'ప్రెగ్నెన్సీ మోడ్',
+      videoLibrary: 'వీడియో లైబ్రరీ',
+      goalsAchievements: 'లక్ష్యాలు & విజయాలు',
+      periodTracker: 'పీరియడ్ ట్రాకర్'
+    },
+    
+    auth: {
+      login: 'లాగిన్',
+      register: 'రిజిస్టర్',
+      email: 'ఇమెయిల్',
+      password: 'పాస్‌వర్డ్',
+      confirmPassword: 'పాస్‌వర్డ్ నిర్ధారించండి',
+      loginTitle: 'తిరిగి స్వాగతం',
+      registerTitle: 'ఖాతా సృష్టించండి',
+      noAccount: 'ఖాతా లేదా?',
+      haveAccount: 'ఇప్పటికే ఖాతా ఉందా?',
+      signUp: 'సైన్ అప్',
+      signIn: 'సైన్ ఇన్',
+      name: 'పేరు',
+      age: 'వయస్సు',
+      startJourney: 'ఈరోజు మీ ఆరోగ్య ప్రయాణాన్ని ప్రారంభించండి',
+      trackHealthPredict: 'మీ ఆరోగ్యాన్ని ట్రాక్ చేయండి, మీ భవిష్యత్తును అంచనా వేయండి',
+      loggingIn: 'లాగిన్ అవుతోంది...',
+      registering: 'రిజిస్టర్ అవుతోంది...',
+      dontHaveAccount: 'ఖాతా లేదా?',
+      registerHere: 'ఇక్కడ రిజిస్టర్ చేయండి'
+    },
+    
+    dashboard: {
+      welcome: 'ఆరాకు స్వాగతం',
+      overview: 'మీ ఆరోగ్య సారాంశం',
+      nextPeriod: 'తదుపరి పీరియడ్',
+      daysUntil: 'రోజుల తర్వాత',
+      cycleTracking: 'సైకిల్ ట్రాకింగ్',
+      avgCycleLength: 'సగటు సైకిల్ పొడవు',
+      symptomLogger: 'లక్షణాల రికార్డర్',
+      pcodRisk: 'పీసీఓడీ ప్రమాదం',
+      healthScore: 'ఆరోగ్య స్కోర్',
+      quickStats: 'త్వరిత గణాంకాలు',
+      streak: 'వరుస రోజులు',
+      smartPeriodTracking: 'స్మార్ట్ పీరియడ్ ట్రాకింగ్',
+      exploreMoreFeatures: 'మరిన్ని ఫీచర్లను అన్వేషించండి',
+      calendarView: 'క్యాలెండర్ వ్యూ',
+      visualCycleTracking: 'విజువల్ సైకిల్ ట్రాకింగ్',
+      viewDetailedAnalytics: 'వివరణాత్మక విశ్లేషణలను చూడండి',
+      tipsRemindersAIChatbot: 'చిట్కాలు, రిమైండర్లు & AI చాట్‌బాట్',
+      voiceLoggerPainMap: 'వాయిస్ లాగర్, పెయిన్ మ్యాప్, హోరోస్కోప్ & మరిన్ని',
+      medicationExerciseSleep: 'మందులు, వ్యాయామం, నిద్ర, పోషకాహారం & మరిన్ని',
+      nextPeriodPrediction: 'తదుపరి పీరియడ్ అంచనా',
+      riskAssessment: 'రిస్క్ అసెస్‌మెంట్',
+      healthDataHub: 'హెల్త్ డేటా హబ్',
+      symptomsCalendarInsights: 'లక్షణాలు, క్యాలెండర్, అంతర్దృష్టులు & జర్నల్ - అన్నీ ఒకే చోట',
+      loadingDashboard: 'మీ హెల్త్ డాష్‌బోర్డ్ లోడ్ అవుతోంది...',
+      welcomeTitle: 'ఆరాకు స్వాగతం',
+      welcomeSubtitle: 'మీ మెన్‌స్ట్రువల్ సైకిల్‌లను ట్రాక్ చేయండి, రాబోయే పీరియడ్‌లను అంచనా వేయండి మరియు మీ పునరుత్పత్తి ఆరోగ్యంపై అంతర్దృష్టులను పొందండి',
+      startTracking: 'మీ మొదటి పీరియడ్‌ను క్రింద లాగ్ చేయడం ద్వారా ప్రారంభించండి',
+      smartPredictions: 'స్మార్ట్ అంచనాలు',
+      privateData: '100% ప్రైవేట్'
+    },
+    
+    quickStats: {
+      title: 'త్వరిత గణాంకాలు',
+      subtitle: 'ఒక చూపులో మీ ఆరోగ్యం',
+      cyclesLogged: 'సైకిల్‌లు లాగ్ చేయబడ్డాయి',
+      symptomsLogged: 'లక్షణాలు లాగ్ చేయబడ్డాయి',
+      waterToday: 'నేడు నీరు',
+      exerciseWeek: 'వ్యాయామం/వారం',
+      avgSleep: 'సగటు నిద్ర',
+      mealsToday: 'నేడు భోజనాలు',
+      activeGoals: 'క్రియాశీల లక్ష్యాలు',
+      dayStreak: 'రోజుల వరుస',
+      amazing: 'అద్భుతం!',
+      loggedDays: 'మీరు వరుసగా రోజులు లాగ్ చేసారు!'
+    },
+    
+    healthScore: {
+      title: 'మొత్తం ఆరోగ్య స్కోర్',
+      subtitle: 'మీ ఆరోగ్య ట్రాకింగ్ కార్యకలాపాల ఆధారంగా',
+      excellent: 'అద్భుతమైనది',
+      good: 'మంచిది',
+      fair: 'సరైనది',
+      needsAttention: 'శ్రద్ధ అవసరం',
+      improving: 'మెరుగుపడుతోంది',
+      declining: 'తగ్గుతోంది',
+      stable: 'స్థిరంగా ఉంది',
+      scoreBreakdown: 'స్కోర్ విభజన',
+      cycleTracking: 'సైకిల్ ట్రాకింగ్',
+      symptomLogging: 'లక్షణ లాగింగ్',
+      hydration: 'హైడ్రేషన్',
+      exercise: 'వ్యాయామం',
+      sleepQuality: 'నిద్ర నాణ్యత',
+      nutrition: 'పోషకాహారం',
+      goalProgress: 'లక్ష్య పురోగతి',
+      howToImprove: 'మీ స్కోర్‌ను ఎలా మెరుగుపరచాలి',
+      logCycles: 'కనీసం 3 మెన్‌స్ట్రువల్ సైకిల్‌లను లాగ్ చేయండి',
+      trackSymptoms: 'మెరుగైన అంతర్దృష్టుల కోసం ప్రతిరోజూ లక్షణాలను ట్రాక్ చేయండి',
+      drinkWater: 'ప్రతిరోజూ 8 గ్లాసుల నీరు త్రాగండి',
+      exerciseGoal: 'వారానికి 150 నిమిషాల వ్యాయామం చేయండి',
+      sleepGoal: '7-9 గంటల నాణ్యమైన నిద్ర పొందండి',
+      logMeals: 'మీ భోజనాలను క్రమం తప్పకుండా లాగ్ చేయండి',
+      setGoals: 'ఆరోగ్య లక్ష్యాలను సెట్ చేసి వాటి వైపు పని చేయండి'
+    },
+    
+    quickActions: {
+      title: 'త్వరిత చర్యలు',
+      logPeriod: 'పీరియడ్ లాగ్ చేయండి',
+      logSymptoms: 'లక్షణాలను లాగ్ చేయండి',
+      pcodCheck: 'పీసీఓడీ తనిఖీ',
+      viewCalendar: 'క్యాలెండర్ చూడండి'
+    },
+    
+    cycles: {
+      title: 'సైకిల్ ట్రాకర్',
+      subtitle: 'మీ మెన్‌స్ట్రువల్ సైకిల్‌లను ట్రాక్ చేయండి',
+      logCycle: 'కొత్త సైకిల్ రికార్డ్ చేయండి',
+      startDate: 'ప్రారంభ తేదీ',
+      endDate: 'ముగింపు తేదీ',
+      flowIntensity: 'ఫ్లో తీవ్రత',
+      light: 'తక్కువ',
+      medium: 'మధ్యస్థం',
+      heavy: 'ఎక్కువ',
+      notes: 'గమనికలు',
+      cycleHistory: 'సైకిల్ చరిత్ర',
+      days: 'రోజులు',
+      noCycles: 'ఇంకా సైకిల్‌లు రికార్డ్ చేయలేదు'
+    },
+    
+    symptoms: {
+      title: 'లక్షణాల రికార్డర్',
+      subtitle: 'మీ రోజువారీ లక్షణాలను ట్రాక్ చేయండి',
+      logSymptoms: 'లక్షణాలను రికార్డ్ చేయండి',
+      selectSymptoms: 'లక్షణాలను ఎంచుకోండి',
+      mood: 'మూడ్',
+      painLevel: 'నొప్పి స్థాయి',
+      cramps: 'క్రాంప్స్',
+      headache: 'తలనొప్పి',
+      bloating: 'ఉబ్బరం',
+      fatigue: 'అలసట',
+      acne: 'మొటిమలు',
+      backPain: 'వెన్నునొప్పి',
+      breastTenderness: 'రొమ్ము నొప్పి',
+      nausea: 'వాంతులు',
+      diarrhea: 'విరేచనాలు',
+      constipation: 'మలబద్ధకం',
+      moodSwings: 'మూడ్ మార్పులు',
+      anxiety: 'ఆందోళన',
+      depression: 'డిప్రెషన్',
+      insomnia: 'నిద్రలేమి',
+      noSymptoms: 'ఇంకా లక్షణాలు రికార్డ్ చేయలేదు'
+    },
+    
+    insights: {
+      title: 'ఆరోగ్య అంతర్దృష్టులు',
+      subtitle: 'AI ఆధారిత ఆరోగ్య విశ్లేషణ',
+      cyclePhase: 'ప్రస్తుత సైకిల్ దశ',
+      symptomInsights: 'లక్షణ అంతర్దృష్టులు',
+      moodTrends: 'మూడ్ ట్రెండ్‌లు',
+      predictions: 'లక్షణ అంచనాలు',
+      forecast: 'రాబోయే 7 రోజుల అంచనా',
+      commonSymptoms: 'మీ సాధారణ లక్షణాలు',
+      fertility: 'సంతానోత్పత్తి కాలిక్యులేటర్'
+    },
+    
+    wellness: {
+      title: 'వెల్నెస్ హబ్',
+      subtitle: 'మీ ఆరోగ్య సహచరుడు',
+      waterTracker: 'నీటి ట్రాకర్',
+      exerciseLogger: 'వ్యాయామ రికార్డర్',
+      sleepTracker: 'నిద్ర ట్రాకర్',
+      nutritionTracker: 'పోషకాహార ట్రాకర్',
+      goalTracker: 'ఆరోగ్య లక్ష్యాలు',
+      communitySupport: 'కమ్యూనిటీ మద్దతు',
+      tips: 'వెల్నెస్ చిట్కాలు'
+    },
+    
+    settings: {
+      title: 'సెట్టింగ్‌లు',
+      subtitle: 'మీ ప్రాధాన్యతలను నిర్వహించండి',
+      notifications: 'నోటిఫికేషన్‌లు',
+      privacy: 'గోప్యత & భద్రత',
+      preferences: 'ప్రాధాన్యతలు',
+      language: 'భాష',
+      theme: 'థీమ్',
+      dataManagement: 'డేటా నిర్వహణ',
+      emergencyContacts: 'అత్యవసర పరిచయాలు',
+      about: 'గురించి'
+    },
+    
+    footer: {
+      disclaimer: 'సమాచార ప్రయోజనాల కోసం మాత్రమే. వైద్య సలహా కోసం ఎల్లప్పుడూ ఆరోగ్య నిపుణులను సంప్రదించండి.'
+    },
+    
+    advanced: {
+      title: 'అధునాతన ఫీచర్లు',
+      subtitle: 'సమగ్ర ఆరోగ్య ట్రాకింగ్ కోసం అత్యాధునిక సాధనాలు',
+      poweredBy: 'AI మరియు ఆధునిక సాంకేతికతతో శక్తివంతమైన అధునాతన ఫీచర్లు',
+      voiceLogger: 'వాయిస్ లక్షణ రికార్డర్',
+      painMap: 'నొప్పి హీట్‌మ్యాప్',
+      horoscope: 'హార్మోన్ రాశిఫలం',
+      emergency: 'పీరియడ్ అత్యవసరం',
+      fertility: 'సంతానోత్పత్తి కాలిక్యులేటర్',
+      supplements: 'సప్లిమెంట్స్ ట్రాకర్',
+      breastExam: 'రొమ్ము స్వీయ పరీక్ష',
+      pcodDiet: 'పీసీఓడీ ఆహార ప్రణాళిక',
+      pcodSymptoms: 'పీసీఓడీ లక్షణాల ట్రాకర్',
+      pcodExercise: 'పీసీఓడీ వ్యాయామ ప్రణాళిక',
+      pcodWeight: 'పీసీఓడీ బరువు ట్రాకర్'
+    }
+  },
+  
   en: {
-    // Common
+    // English
     common: {
       appName: 'Aura',
       tagline: 'Your Personal Period Tracking Companion',
@@ -31,7 +274,13 @@ export const translations = {
       insights: 'Health Insights',
       wellness: 'Wellness Hub',
       advanced: 'Advanced',
-      settings: 'Settings'
+      settings: 'Settings',
+      healthDataHub: 'Health Data Hub',
+      healthTrackers: 'Health Trackers',
+      pregnancyMode: 'Pregnancy Mode',
+      videoLibrary: 'Video Library',
+      goalsAchievements: 'Goals & Achievements',
+      periodTracker: 'Period Tracker'
     },
     
     // Auth
@@ -46,7 +295,15 @@ export const translations = {
       noAccount: "Don't have an account?",
       haveAccount: 'Already have an account?',
       signUp: 'Sign up',
-      signIn: 'Sign in'
+      signIn: 'Sign in',
+      name: 'Name',
+      age: 'Age',
+      startJourney: 'Start your health journey today',
+      trackHealthPredict: 'Track your health, predict your future',
+      loggingIn: 'Logging in...',
+      registering: 'Registering...',
+      dontHaveAccount: "Don't have an account?",
+      registerHere: 'Register here'
     },
     
     // Dashboard
@@ -61,7 +318,76 @@ export const translations = {
       pcodRisk: 'PCOD Risk',
       healthScore: 'Overall Health Score',
       quickStats: 'Quick Stats',
-      streak: 'Day Streak'
+      streak: 'Day Streak',
+      smartPeriodTracking: 'Smart period tracking',
+      exploreMoreFeatures: 'Explore More Features',
+      calendarView: 'Calendar View',
+      visualCycleTracking: 'Visual cycle tracking',
+      viewDetailedAnalytics: 'View detailed analytics and patterns',
+      tipsRemindersAIChatbot: 'Tips, reminders & AI chatbot',
+      voiceLoggerPainMap: 'Voice logger, pain map, horoscope & more',
+      medicationExerciseSleep: 'Medication, exercise, sleep, nutrition & more',
+      nextPeriodPrediction: 'Next Period Prediction',
+      riskAssessment: 'Risk Assessment',
+      healthDataHub: 'Health Data Hub',
+      symptomsCalendarInsights: 'Symptoms, Calendar, Insights & Journal - All in One',
+      loadingDashboard: 'Loading your health dashboard...',
+      welcomeTitle: 'Welcome to Aura',
+      welcomeSubtitle: 'Track your menstrual cycles, predict upcoming periods, and gain insights into your reproductive health',
+      startTracking: 'Start by logging your first period below',
+      smartPredictions: 'Smart Predictions',
+      privateData: '100% Private'
+    },
+    
+    quickStats: {
+      title: 'Quick Stats',
+      subtitle: 'Your health at a glance',
+      cyclesLogged: 'Cycles Logged',
+      symptomsLogged: 'Symptoms Logged',
+      waterToday: 'Water Today',
+      exerciseWeek: 'Exercise/Week',
+      avgSleep: 'Avg Sleep',
+      mealsToday: 'Meals Today',
+      activeGoals: 'Active Goals',
+      dayStreak: 'Day Streak',
+      amazing: 'Amazing!',
+      loggedDays: 'You\'ve logged for days straight!'
+    },
+    
+    healthScore: {
+      title: 'Overall Health Score',
+      subtitle: 'Based on your health tracking activities',
+      excellent: 'Excellent',
+      good: 'Good',
+      fair: 'Fair',
+      needsAttention: 'Needs Attention',
+      improving: 'Improving',
+      declining: 'Declining',
+      stable: 'Stable',
+      scoreBreakdown: 'Score Breakdown',
+      cycleTracking: 'Cycle Tracking',
+      symptomLogging: 'Symptom Logging',
+      hydration: 'Hydration',
+      exercise: 'Exercise',
+      sleepQuality: 'Sleep Quality',
+      nutrition: 'Nutrition',
+      goalProgress: 'Goal Progress',
+      howToImprove: 'How to Improve Your Score',
+      logCycles: 'Log at least 3 menstrual cycles',
+      trackSymptoms: 'Track symptoms daily for better insights',
+      drinkWater: 'Drink 8 glasses of water daily',
+      exerciseGoal: 'Aim for 150 minutes of exercise per week',
+      sleepGoal: 'Get 7-9 hours of quality sleep',
+      logMeals: 'Log your meals regularly',
+      setGoals: 'Set and work towards health goals'
+    },
+    
+    quickActions: {
+      title: 'Quick Actions',
+      logPeriod: 'Log Period',
+      logSymptoms: 'Log Symptoms',
+      pcodCheck: 'PCOD Check',
+      viewCalendar: 'View Calendar'
     },
     
     // Cycle Tracker
@@ -195,7 +521,13 @@ export const translations = {
       insights: 'स्वास्थ्य जानकारी',
       wellness: 'वेलनेस हब',
       advanced: 'उन्नत',
-      settings: 'सेटिंग्स'
+      settings: 'सेटिंग्स',
+      healthDataHub: 'हेल्थ डेटा हब',
+      healthTrackers: 'हेल्थ ट्रैकर्स',
+      pregnancyMode: 'प्रेग्नेंसी मोड',
+      videoLibrary: 'वीडियो लाइब्रेरी',
+      goalsAchievements: 'लक्ष्य और उपलब्धियां',
+      periodTracker: 'पीरियड ट्रैकर'
     },
     
     auth: {
@@ -209,7 +541,15 @@ export const translations = {
       noAccount: 'खाता नहीं है?',
       haveAccount: 'पहले से खाता है?',
       signUp: 'साइन अप करें',
-      signIn: 'साइन इन करें'
+      signIn: 'साइन इन करें',
+      name: 'नाम',
+      age: 'उम्र',
+      startJourney: 'आज अपनी स्वास्थ्य यात्रा शुरू करें',
+      trackHealthPredict: 'अपने स्वास्थ्य को ट्रैक करें, अपने भविष्य की भविष्यवाणी करें',
+      loggingIn: 'लॉगिन हो रहा है...',
+      registering: 'रजिस्टर हो रहा है...',
+      dontHaveAccount: 'खाता नहीं है?',
+      registerHere: 'यहां रजिस्टर करें'
     },
     
     dashboard: {
@@ -223,7 +563,76 @@ export const translations = {
       pcodRisk: 'पीसीओडी जोखिम',
       healthScore: 'समग्र स्वास्थ्य स्कोर',
       quickStats: 'त्वरित आंकड़े',
-      streak: 'दिन की लकीर'
+      streak: 'दिन की लकीर',
+      smartPeriodTracking: 'स्मार्ट पीरियड ट्रैकिंग',
+      exploreMoreFeatures: 'अधिक सुविधाएं देखें',
+      calendarView: 'कैलेंडर व्यू',
+      visualCycleTracking: 'विजुअल साइकिल ट्रैकिंग',
+      viewDetailedAnalytics: 'विस्तृत विश्लेषण और पैटर्न देखें',
+      tipsRemindersAIChatbot: 'टिप्स, रिमाइंडर और AI चैटबॉट',
+      voiceLoggerPainMap: 'वॉयस लॉगर, पेन मैप, होरोस्कोप और अधिक',
+      medicationExerciseSleep: 'दवा, व्यायाम, नींद, पोषण और अधिक',
+      nextPeriodPrediction: 'अगली माहवारी की भविष्यवाणी',
+      riskAssessment: 'जोखिम मूल्यांकन',
+      healthDataHub: 'हेल्थ डेटा हब',
+      symptomsCalendarInsights: 'लक्षण, कैलेंडर, जानकारी और जर्नल - सब एक जगह',
+      loadingDashboard: 'आपका हेल्थ डैशबोर्ड लोड हो रहा है...',
+      welcomeTitle: 'ऑरा में आपका स्वागत है',
+      welcomeSubtitle: 'अपनी माहवारी चक्र ट्रैक करें, आगामी पीरियड्स की भविष्यवाणी करें, और अपने प्रजनन स्वास्थ्य में अंतर्दृष्टि प्राप्त करें',
+      startTracking: 'नीचे अपनी पहली माहवारी लॉग करके शुरू करें',
+      smartPredictions: 'स्मार्ट भविष्यवाणियां',
+      privateData: '100% निजी'
+    },
+    
+    quickStats: {
+      title: 'त्वरित आंकड़े',
+      subtitle: 'एक नज़र में आपका स्वास्थ्य',
+      cyclesLogged: 'साइकिल लॉग किए गए',
+      symptomsLogged: 'लक्षण लॉग किए गए',
+      waterToday: 'आज पानी',
+      exerciseWeek: 'व्यायाम/सप्ताह',
+      avgSleep: 'औसत नींद',
+      mealsToday: 'आज भोजन',
+      activeGoals: 'सक्रिय लक्ष्य',
+      dayStreak: 'दिन की लकीर',
+      amazing: 'अद्भुत!',
+      loggedDays: 'आपने लगातार दिनों तक लॉग किया है!'
+    },
+    
+    healthScore: {
+      title: 'समग्र स्वास्थ्य स्कोर',
+      subtitle: 'आपकी स्वास्थ्य ट्रैकिंग गतिविधियों के आधार पर',
+      excellent: 'उत्कृष्ट',
+      good: 'अच्छा',
+      fair: 'ठीक',
+      needsAttention: 'ध्यान देने की आवश्यकता',
+      improving: 'सुधार हो रहा है',
+      declining: 'गिरावट',
+      stable: 'स्थिर',
+      scoreBreakdown: 'स्कोर विवरण',
+      cycleTracking: 'साइकिल ट्रैकिंग',
+      symptomLogging: 'लक्षण लॉगिंग',
+      hydration: 'हाइड्रेशन',
+      exercise: 'व्यायाम',
+      sleepQuality: 'नींद की गुणवत्ता',
+      nutrition: 'पोषण',
+      goalProgress: 'लक्ष्य प्रगति',
+      howToImprove: 'अपना स्कोर कैसे सुधारें',
+      logCycles: 'कम से कम 3 माहवारी चक्र लॉग करें',
+      trackSymptoms: 'बेहतर अंतर्दृष्टि के लिए रोजाना लक्षण ट्रैक करें',
+      drinkWater: 'रोजाना 8 गिलास पानी पिएं',
+      exerciseGoal: 'प्रति सप्ताह 150 मिनट व्यायाम का लक्ष्य रखें',
+      sleepGoal: '7-9 घंटे की गुणवत्ता नींद लें',
+      logMeals: 'अपने भोजन को नियमित रूप से लॉग करें',
+      setGoals: 'स्वास्थ्य लक्ष्य निर्धारित करें और उनकी ओर काम करें'
+    },
+    
+    quickActions: {
+      title: 'त्वरित कार्य',
+      logPeriod: 'पीरियड लॉग करें',
+      logSymptoms: 'लक्षण लॉग करें',
+      pcodCheck: 'पीसीओडी जांच',
+      viewCalendar: 'कैलेंडर देखें'
     },
     
     cycles: {

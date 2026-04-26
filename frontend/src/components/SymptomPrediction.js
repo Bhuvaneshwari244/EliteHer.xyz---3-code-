@@ -10,32 +10,58 @@ function SymptomPrediction() {
   }, []);
 
   const analyzePatternsAndPredict = () => {
-    const symptoms = JSON.parse(localStorage.getItem('symptoms') || '[]');
-    const cycles = JSON.parse(localStorage.getItem('cycles') || '[]');
+    try {
+      const symptoms = JSON.parse(localStorage.getItem('symptoms') || '[]');
+      const cycles = JSON.parse(localStorage.getItem('cycles') || '[]');
 
-    if (symptoms.length < 3) {
-      return;
-    }
+      if (!Array.isArray(symptoms) || symptoms.length < 3) {
+        setPredictions([]);
+        setPatterns(null);
+        return;
+      }
 
-    // Analyze symptom patterns by cycle phase
-    const phaseSymptoms = {
-      menstrual: {},
-      follicular: {},
-      ovulation: {},
-      luteal: {}
-    };
+      // Analyze symptom patterns by cycle phase
+      const phaseSymptoms = {
+        menstrual: {},
+        follicular: {},
+        ovulation: {},
+        luteal: {}
+      };
 
-    symptoms.forEach(symptom => {
-      const date = new Date(symptom.date);
-      const phase = determinePhase(date, cycles);
-      
-      symptom.symptoms.forEach(s => {
-        if (!phaseSymptoms[phase][s]) {
-          phaseSymptoms[phase][s] = 0;
+      symptoms.forEach(symptom => {
+        try {
+          const date = new Date(symptom.date || symptom.created_at);
+          if (isNaN(date.getTime())) return; // Skip invalid dates
+          
+          const phase = determinePhase(date, cycles);
+          
+          // Handle different symptom data structures
+          let activeSymptoms = [];
+          
+          if (symptom.symptoms && Array.isArray(symptom.symptoms)) {
+            // If symptoms is an array (from voice logger)
+            activeSymptoms = symptom.symptoms;
+          } else {
+            // If symptoms are stored as individual properties (from symptom logger)
+            Object.keys(symptom).forEach(key => {
+              if (symptom[key] && typeof symptom[key] === 'object' && symptom[key].active) {
+                activeSymptoms.push(key);
+              }
+            });
+          }
+          
+          activeSymptoms.forEach(s => {
+            if (typeof s === 'string') {
+              if (!phaseSymptoms[phase][s]) {
+                phaseSymptoms[phase][s] = 0;
+              }
+              phaseSymptoms[phase][s]++;
+            }
+          });
+        } catch (error) {
+          console.warn('Error processing symptom:', symptom, error);
         }
-        phaseSymptoms[phase][s]++;
       });
-    });
 
     // Generate predictions for next 7 days
     const today = new Date();
@@ -66,10 +92,28 @@ function SymptomPrediction() {
     setPredictions(nextWeek);
     
     // Calculate overall patterns
-    const allSymptoms = symptoms.flatMap(s => s.symptoms);
+    let allSymptoms = [];
+    symptoms.forEach(symptom => {
+      try {
+        if (symptom.symptoms && Array.isArray(symptom.symptoms)) {
+          allSymptoms = allSymptoms.concat(symptom.symptoms.filter(s => typeof s === 'string'));
+        } else {
+          Object.keys(symptom).forEach(key => {
+            if (symptom[key] && typeof symptom[key] === 'object' && symptom[key].active) {
+              allSymptoms.push(key);
+            }
+          });
+        }
+      } catch (error) {
+        console.warn('Error processing symptom for patterns:', symptom, error);
+      }
+    });
+    
     const symptomCounts = {};
     allSymptoms.forEach(s => {
-      symptomCounts[s] = (symptomCounts[s] || 0) + 1;
+      if (typeof s === 'string') {
+        symptomCounts[s] = (symptomCounts[s] || 0) + 1;
+      }
     });
 
     const mostCommon = Object.entries(symptomCounts)
@@ -79,9 +123,14 @@ function SymptomPrediction() {
     setPatterns({
       mostCommon,
       totalLogs: symptoms.length,
-      avgSymptomsPerDay: (allSymptoms.length / symptoms.length).toFixed(1)
+      avgSymptomsPerDay: allSymptoms.length > 0 ? (allSymptoms.length / symptoms.length).toFixed(1) : '0'
     });
-  };
+  } catch (error) {
+    console.error('Error in analyzePatternsAndPredict:', error);
+    setPredictions([]);
+    setPatterns(null);
+  }
+};
 
   const determinePhase = (date, cycles) => {
     if (cycles.length === 0) return 'follicular';

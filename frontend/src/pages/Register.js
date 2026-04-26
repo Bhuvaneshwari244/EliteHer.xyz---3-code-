@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authAPI } from '../services/api';
+import { Eye, EyeOff, Mail, Lock, User, Calendar } from 'lucide-react';
+import AnimatedBackground from '../components/AnimatedBackground';
+import AnimatedPage from '../components/AnimatedPage';
+import RippleButton from '../components/RippleButton';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { pageAnimationClasses, getStaggerDelay, showNotification, triggerSuccessAnimation } from '../utils/animationUtils';
+import { useLanguage } from '../context/LanguageContext';
 
 function Register({ setAuth }) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,6 +20,7 @@ function Register({ setAuth }) {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -76,15 +85,15 @@ function Register({ setAuth }) {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>🌸 Aura</h1>
-        <h2>Create Account</h2>
-        <p className="subtitle">Start your health journey today</p>
+        <h1>🌸 {t('common.appName')}</h1>
+        <h2>{t('auth.registerTitle')}</h2>
+        <p className="subtitle">{t('auth.startJourney')}</p>
 
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Name</label>
+            <label>{t('auth.name')}</label>
             <input
               type="text"
               name="name"
@@ -96,7 +105,7 @@ function Register({ setAuth }) {
           </div>
 
           <div className="form-group">
-            <label>Email</label>
+            <label>{t('auth.email')}</label>
             <input
               type="email"
               name="email"
@@ -108,7 +117,7 @@ function Register({ setAuth }) {
           </div>
 
           <div className="form-group">
-            <label>Age</label>
+            <label>{t('auth.age')}</label>
             <input
               type="number"
               name="age"
@@ -121,7 +130,7 @@ function Register({ setAuth }) {
           </div>
 
           <div className="form-group">
-            <label>Password</label>
+            <label>{t('auth.password')}</label>
             <input
               type="password"
               name="password"
@@ -134,12 +143,12 @@ function Register({ setAuth }) {
           </div>
 
           <button type="submit" className="btn-primary" disabled={loading}>
-            {loading ? 'Creating account...' : 'Register'}
+            {loading ? t('auth.registering') : t('auth.register')}
           </button>
         </form>
 
         <p className="auth-footer">
-          Already have an account? <Link to="/login">Login here</Link>
+          {t('auth.haveAccount')} <Link to="/login">{t('auth.signIn')}</Link>
         </p>
       </div>
     </div>

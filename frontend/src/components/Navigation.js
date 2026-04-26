@@ -11,15 +11,15 @@ function Navigation() {
 
   const navItems = [
     { path: '/dashboard', icon: Home, label: t('nav.dashboard') },
-    { path: '/health-data', icon: Database, label: 'Health Data Hub' },
-    { path: '/trackers', icon: BarChart3, label: 'Health Trackers' },
-    { path: '/pregnancy', icon: Baby, label: 'Pregnancy Mode' },
+    { path: '/health-data', icon: Database, label: t('nav.healthDataHub') },
+    { path: '/trackers', icon: BarChart3, label: t('nav.healthTrackers') },
+    { path: '/pregnancy', icon: Baby, label: t('nav.pregnancyMode') },
     { path: '/pcod-assessment', icon: AlertCircle, label: t('nav.pcod') },
     { path: '/doctor-consultation', icon: Stethoscope, label: t('nav.doctors') },
     { path: '/wellness-hub', icon: Heart, label: t('nav.wellness') },
-    { path: '/video-library', icon: Play, label: 'Video Library' },
+    { path: '/video-library', icon: Play, label: t('nav.videoLibrary') },
     { path: '/advanced-features', icon: Sparkles, label: t('nav.advanced') },
-    { path: '/phase4', icon: Rocket, label: 'Goals & Achievements' },
+    { path: '/phase4', icon: Rocket, label: t('nav.goalsAchievements') },
     { path: '/settings', icon: Settings, label: t('nav.settings') }
   ];
 
@@ -37,32 +37,34 @@ function Navigation() {
       </button>
 
       {/* Navigation Bar */}
-      <nav className={`navigation-bar ${isOpen ? 'open' : ''}`}>
+      <nav className={`navigation-bar ${isOpen ? 'open slide-in-left' : ''}`}>
         {/* Brand Logo */}
-        <div className="nav-brand" onClick={() => navigate('/dashboard')}>
-          <span className="nav-logo">🌸</span>
+        <div className="nav-brand scale-on-hover" onClick={() => navigate('/dashboard')}>
+          <span className="nav-logo heartbeat">🌸</span>
           <div className="nav-brand-text">
-            <h2>Aura</h2>
-            <p>Period Tracker</p>
+            <h2>{t('common.appName')}</h2>
+            <p>{t('nav.periodTracker')}</p>
           </div>
         </div>
         
         <div className="nav-divider"></div>
         
         <div className="nav-items">
-          {navItems.map((item) => {
+          {navItems.map((item, index) => {
             const Icon = item.icon;
             return (
               <button
                 key={item.path}
-                className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
+                className={`nav-item stagger-item scale-on-hover glow-on-focus ${isActive(item.path) ? 'active bounce-in' : ''}`}
                 onClick={() => {
                   navigate(item.path);
                   setIsOpen(false);
                 }}
+                style={{ animationDelay: `${index * 0.05}s` }}
               >
-                <Icon size={20} />
+                <Icon size={20} className={isActive(item.path) ? 'pulse' : 'rotate-on-hover'} />
                 <span>{item.label}</span>
+                {isActive(item.path) && <div className="active-indicator"></div>}
               </button>
             );
           })}

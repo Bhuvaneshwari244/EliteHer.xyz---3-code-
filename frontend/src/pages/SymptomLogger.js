@@ -509,15 +509,61 @@ function SymptomLogger() {
                   )}
                 </div>
 
-                {symptom.symptoms && Object.keys(symptom.symptoms).length > 0 && (
-                  <div className="symptom-details">
-                    {Object.entries(symptom.symptoms).map(([key, intensity]) => (
-                      <span key={key} className="symptom-badge">
-                        {key.replace(/_/g, ' ')} ({intensity}/5)
-                      </span>
-                    ))}
-                  </div>
-                )}
+                {(() => {
+                  // Handle different symptom data structures
+                  let symptomDisplay = null;
+                  
+                  if (symptom.symptoms && Array.isArray(symptom.symptoms)) {
+                    // Array format (from voice logger)
+                    if (symptom.symptoms.length > 0) {
+                      symptomDisplay = (
+                        <div className="symptom-details">
+                          {symptom.symptoms.map((s, idx) => (
+                            <span key={idx} className="symptom-badge">
+                              {typeof s === 'string' ? s.replace(/_/g, ' ') : s}
+                            </span>
+                          ))}
+                        </div>
+                      );
+                    }
+                  } else if (symptom.symptoms && typeof symptom.symptoms === 'object') {
+                    // Object format with intensities
+                    const entries = Object.entries(symptom.symptoms);
+                    if (entries.length > 0) {
+                      symptomDisplay = (
+                        <div className="symptom-details">
+                          {entries.map(([key, intensity]) => (
+                            <span key={key} className="symptom-badge">
+                              {key.replace(/_/g, ' ')} ({intensity}/5)
+                            </span>
+                          ))}
+                        </div>
+                      );
+                    }
+                  } else {
+                    // Individual properties format (from symptom logger)
+                    const activeSymptoms = [];
+                    Object.keys(symptom).forEach(key => {
+                      if (symptom[key] && typeof symptom[key] === 'object' && symptom[key].active) {
+                        activeSymptoms.push({ key, intensity: symptom[key].intensity || 1 });
+                      }
+                    });
+                    
+                    if (activeSymptoms.length > 0) {
+                      symptomDisplay = (
+                        <div className="symptom-details">
+                          {activeSymptoms.map(({ key, intensity }) => (
+                            <span key={key} className="symptom-badge">
+                              {key.replace(/_/g, ' ')} ({intensity}/5)
+                            </span>
+                          ))}
+                        </div>
+                      );
+                    }
+                  }
+                  
+                  return symptomDisplay;
+                })()}
                 
                 {symptom.notes && <p className="symptom-notes">{symptom.notes}</p>}
               </div>

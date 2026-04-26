@@ -7,8 +7,9 @@ function LanguageSelector() {
   const [isOpen, setIsOpen] = useState(false);
 
   const languages = [
-    { code: 'en', name: 'English' },
+    { code: 'te', name: 'తెలుగు' },
     { code: 'hi', name: 'हिंदी' },
+    { code: 'en', name: 'English' },
     { code: 'es', name: 'Español' },
     { code: 'fr', name: 'Français' },
     { code: 'de', name: 'Deutsch' },

@@ -293,16 +293,33 @@ function CalendarView() {
             {getDaySymptoms(selectedDay).length > 0 ? (
               <div className="symptoms-list">
                 <h4>Logged Data:</h4>
-                {getDaySymptoms(selectedDay).map((symptom, idx) => (
-                  <div key={idx} className="symptom-item">
-                    <p><strong>Mood:</strong> {symptom.mood}</p>
-                    <p><strong>Pain Level:</strong> {symptom.pain_level}/10</p>
-                    {symptom.symptoms && symptom.symptoms.length > 0 && (
-                      <p><strong>Symptoms:</strong> {symptom.symptoms.join(', ')}</p>
-                    )}
-                    {symptom.notes && <p><strong>Notes:</strong> {symptom.notes}</p>}
-                  </div>
-                ))}
+                {getDaySymptoms(selectedDay).map((symptom, idx) => {
+                  // Handle different symptom data structures
+                  let symptomList = [];
+                  if (symptom.symptoms && Array.isArray(symptom.symptoms)) {
+                    symptomList = symptom.symptoms;
+                  } else if (symptom.symptoms && typeof symptom.symptoms === 'object') {
+                    symptomList = Object.keys(symptom.symptoms);
+                  } else {
+                    // Extract active symptoms from individual properties
+                    Object.keys(symptom).forEach(key => {
+                      if (symptom[key] && typeof symptom[key] === 'object' && symptom[key].active) {
+                        symptomList.push(key.replace(/_/g, ' '));
+                      }
+                    });
+                  }
+
+                  return (
+                    <div key={idx} className="symptom-item">
+                      <p><strong>Mood:</strong> {symptom.mood}</p>
+                      <p><strong>Pain Level:</strong> {symptom.pain_level}/10</p>
+                      {symptomList.length > 0 && (
+                        <p><strong>Symptoms:</strong> {symptomList.join(', ')}</p>
+                      )}
+                      {symptom.notes && <p><strong>Notes:</strong> {symptom.notes}</p>}
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <div className="no-data">

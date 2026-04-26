@@ -80,11 +80,26 @@ function DataBackup() {
       if (backupData.data.symptoms && backupData.data.symptoms.length > 0) {
         for (const symptom of backupData.data.symptoms) {
           try {
+            // Handle different symptom data structures
+            let symptomsArray = [];
+            if (symptom.symptoms && Array.isArray(symptom.symptoms)) {
+              symptomsArray = symptom.symptoms;
+            } else if (symptom.symptoms && typeof symptom.symptoms === 'object') {
+              symptomsArray = Object.keys(symptom.symptoms);
+            } else {
+              // Extract active symptoms from individual properties
+              Object.keys(symptom).forEach(key => {
+                if (symptom[key] && typeof symptom[key] === 'object' && symptom[key].active) {
+                  symptomsArray.push(key);
+                }
+              });
+            }
+            
             await symptomsAPI.addSymptom({
               date: symptom.date,
               mood: symptom.mood,
               pain_level: symptom.pain_level,
-              symptoms: symptom.symptoms || [],
+              symptoms: symptomsArray,
               notes: symptom.notes || ''
             });
           } catch (err) {

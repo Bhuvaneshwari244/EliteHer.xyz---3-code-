@@ -18,6 +18,10 @@ import IntimateActivityTracker from '../components/IntimateActivityTracker';
 import BBTTracker from '../components/BBTTracker';
 import CervicalMucusTracker from '../components/CervicalMucusTracker';
 import CycleTracker from '../pages/CycleTracker';
+import AnimatedPage from '../components/AnimatedPage';
+import RippleButton from '../components/RippleButton';
+import AnimatedProgressBar from '../components/AnimatedProgressBar';
+import { pageAnimationClasses, getStaggerDelay } from '../utils/animationUtils';
 
 function Trackers() {
   const navigate = useNavigate();

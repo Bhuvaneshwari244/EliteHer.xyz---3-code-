@@ -36,11 +36,15 @@ function AdvancedFeatures() {
       
       // Convert voice symptom format to match SymptomLogger format
       const symptomObject = {};
-      symptomData.symptoms.forEach(symptom => {
-        // Map symptom names to match SymptomLogger keys
-        const symptomKey = symptom.replace(/([A-Z])/g, '_$1').toLowerCase();
-        symptomObject[symptomKey] = 5; // Default intensity for voice-logged symptoms
-      });
+      if (symptomData.symptoms && Array.isArray(symptomData.symptoms)) {
+        symptomData.symptoms.forEach(symptom => {
+          if (typeof symptom === 'string') {
+            // Map symptom names to match SymptomLogger keys
+            const symptomKey = symptom.replace(/([A-Z])/g, '_$1').toLowerCase();
+            symptomObject[symptomKey] = 5; // Default intensity for voice-logged symptoms
+          }
+        });
+      }
       
       const newSymptom = {
         id: Date.now(),

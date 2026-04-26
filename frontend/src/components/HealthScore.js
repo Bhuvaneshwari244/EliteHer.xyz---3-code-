@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, TrendingUp, Award, Target } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 function HealthScore() {
+  const { t } = useLanguage();
   const [score, setScore] = useState(0);
   const [breakdown, setBreakdown] = useState({});
   const [trend, setTrend] = useState('stable');
@@ -123,10 +125,10 @@ function HealthScore() {
   };
 
   const getScoreLabel = (score) => {
-    if (score >= 80) return 'Excellent';
-    if (score >= 60) return 'Good';
-    if (score >= 40) return 'Fair';
-    return 'Needs Attention';
+    if (score >= 80) return t('healthScore.excellent');
+    if (score >= 60) return t('healthScore.good');
+    if (score >= 40) return t('healthScore.fair');
+    return t('healthScore.needsAttention');
   };
 
   const getTrendIcon = () => {
@@ -136,9 +138,9 @@ function HealthScore() {
   };
 
   const getTrendText = () => {
-    if (trend === 'improving') return 'Improving';
-    if (trend === 'declining') return 'Declining';
-    return 'Stable';
+    if (trend === 'improving') return t('healthScore.improving');
+    if (trend === 'declining') return t('healthScore.declining');
+    return t('healthScore.stable');
   };
 
   return (
@@ -147,9 +149,9 @@ function HealthScore() {
         <div>
           <h3>
             <Activity size={24} />
-            Overall Health Score
+            {t('healthScore.title')}
           </h3>
-          <p className="score-subtitle">Based on your health tracking activities</p>
+          <p className="score-subtitle">{t('healthScore.subtitle')}</p>
         </div>
       </div>
 
@@ -177,12 +179,12 @@ function HealthScore() {
       <div className="score-breakdown">
         <h4>
           <Target size={18} />
-          Score Breakdown
+          {t('healthScore.scoreBreakdown')}
         </h4>
         <div className="breakdown-list">
           <div className="breakdown-item">
             <div className="breakdown-label">
-              <span>📅 Cycle Tracking</span>
+              <span>📅 {t('healthScore.cycleTracking')}</span>
               <span className="breakdown-value">{Math.round(breakdown.cycleTracking || 0)}%</span>
             </div>
             <div className="breakdown-bar">
@@ -198,7 +200,7 @@ function HealthScore() {
 
           <div className="breakdown-item">
             <div className="breakdown-label">
-              <span>🩺 Symptom Logging</span>
+              <span>🩺 {t('healthScore.symptomLogging')}</span>
               <span className="breakdown-value">{Math.round(breakdown.symptomLogging || 0)}%</span>
             </div>
             <div className="breakdown-bar">
@@ -214,7 +216,7 @@ function HealthScore() {
 
           <div className="breakdown-item">
             <div className="breakdown-label">
-              <span>💧 Hydration</span>
+              <span>💧 {t('healthScore.hydration')}</span>
               <span className="breakdown-value">{Math.round(breakdown.hydration || 0)}%</span>
             </div>
             <div className="breakdown-bar">
@@ -230,7 +232,7 @@ function HealthScore() {
 
           <div className="breakdown-item">
             <div className="breakdown-label">
-              <span>🏃‍♀️ Exercise</span>
+              <span>🏃‍♀️ {t('healthScore.exercise')}</span>
               <span className="breakdown-value">{Math.round(breakdown.exercise || 0)}%</span>
             </div>
             <div className="breakdown-bar">
@@ -246,7 +248,7 @@ function HealthScore() {
 
           <div className="breakdown-item">
             <div className="breakdown-label">
-              <span>😴 Sleep Quality</span>
+              <span>😴 {t('healthScore.sleepQuality')}</span>
               <span className="breakdown-value">{Math.round(breakdown.sleep || 0)}%</span>
             </div>
             <div className="breakdown-bar">
@@ -262,7 +264,7 @@ function HealthScore() {
 
           <div className="breakdown-item">
             <div className="breakdown-label">
-              <span>🍎 Nutrition</span>
+              <span>🍎 {t('healthScore.nutrition')}</span>
               <span className="breakdown-value">{Math.round(breakdown.nutrition || 0)}%</span>
             </div>
             <div className="breakdown-bar">
@@ -278,7 +280,7 @@ function HealthScore() {
 
           <div className="breakdown-item">
             <div className="breakdown-label">
-              <span>🎯 Goal Progress</span>
+              <span>🎯 {t('healthScore.goalProgress')}</span>
               <span className="breakdown-value">{Math.round(breakdown.goals || 0)}%</span>
             </div>
             <div className="breakdown-bar">
@@ -297,16 +299,16 @@ function HealthScore() {
       <div className="score-tips">
         <h4>
           <TrendingUp size={18} />
-          How to Improve Your Score
+          {t('healthScore.howToImprove')}
         </h4>
         <ul>
-          {breakdown.cycleTracking < 80 && <li>📅 Log at least 3 menstrual cycles</li>}
-          {breakdown.symptomLogging < 80 && <li>🩺 Track symptoms daily for better insights</li>}
-          {breakdown.hydration < 80 && <li>💧 Drink 8 glasses of water daily</li>}
-          {breakdown.exercise < 80 && <li>🏃‍♀️ Aim for 150 minutes of exercise per week</li>}
-          {breakdown.sleep < 80 && <li>😴 Get 7-9 hours of quality sleep</li>}
-          {breakdown.nutrition < 80 && <li>🍎 Log your meals regularly</li>}
-          {breakdown.goals < 80 && <li>🎯 Set and work towards health goals</li>}
+          {breakdown.cycleTracking < 80 && <li>📅 {t('healthScore.logCycles')}</li>}
+          {breakdown.symptomLogging < 80 && <li>🩺 {t('healthScore.trackSymptoms')}</li>}
+          {breakdown.hydration < 80 && <li>💧 {t('healthScore.drinkWater')}</li>}
+          {breakdown.exercise < 80 && <li>🏃‍♀️ {t('healthScore.exerciseGoal')}</li>}
+          {breakdown.sleep < 80 && <li>😴 {t('healthScore.sleepGoal')}</li>}
+          {breakdown.nutrition < 80 && <li>🍎 {t('healthScore.logMeals')}</li>}
+          {breakdown.goals < 80 && <li>🎯 {t('healthScore.setGoals')}</li>}
         </ul>
       </div>
     </div>

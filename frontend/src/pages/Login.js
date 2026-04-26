@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authAPI } from '../services/api';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import AnimatedBackground from '../components/AnimatedBackground';
+import AnimatedPage from '../components/AnimatedPage';
+import RippleButton from '../components/RippleButton';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { pageAnimationClasses, getStaggerDelay, showNotification, triggerSuccessAnimation } from '../utils/animationUtils';
+import { useLanguage } from '../context/LanguageContext';
 
 function Login({ setAuth }) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -46,15 +55,15 @@ function Login({ setAuth }) {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>🌸 Aura</h1>
-        <h2>Welcome Back</h2>
-        <p className="subtitle">Track your health, predict your future</p>
+        <h1>🌸 {t('common.appName')}</h1>
+        <h2>{t('auth.loginTitle')}</h2>
+        <p className="subtitle">{t('auth.trackHealthPredict')}</p>
 
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Email</label>
+            <label>{t('auth.email')}</label>
             <input
               type="email"
               name="email"
@@ -66,7 +75,7 @@ function Login({ setAuth }) {
           </div>
 
           <div className="form-group">
-            <label>Password</label>
+            <label>{t('auth.password')}</label>
             <input
               type="password"
               name="password"
@@ -78,12 +87,12 @@ function Login({ setAuth }) {
           </div>
 
           <button type="submit" className="btn-primary" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? t('auth.loggingIn') : t('auth.login')}
           </button>
         </form>
 
         <p className="auth-footer">
-          Don't have an account? <Link to="/register">Register here</Link>
+          {t('auth.dontHaveAccount')} <Link to="/register">{t('auth.registerHere')}</Link>
         </p>
       </div>
     </div>
